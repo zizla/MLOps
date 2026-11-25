@@ -1939,7 +1939,9 @@
        공통 유틸리티: 토스트, 서랍, 탭 전환, 툴팁, 반응형 캔버스 DPR 헬퍼
        ======================================================================== */
     let toastTimer = null;
-    function showToast(msg) {
+    function showToast(msg, moduleNum) {
+      // 다른 모듈(탭)에서 발생한 알림은 현재 화면에 남기지 않는다
+      if (moduleNum && moduleNum !== currentModule) return;
       const box = document.getElementById('toastBox');
       box.textContent = msg;
       box.classList.add('show');
@@ -2201,14 +2203,14 @@
     document.getElementById('m1RunBtn').addEventListener('click', () => {
       if (m1Timer) clearInterval(m1Timer);
       if (m1Day >= 30) m1Day = 0;
-      showToast('공장 라인 30일 투입 시뮬레이션을 시작합니다.');
+      showToast('공장 라인 30일 투입 시뮬레이션을 시작합니다.', 1);
       m1Timer = setInterval(() => {
         m1Day++;
         m1UpdateUI();
         if (m1Day >= 30) {
           clearInterval(m1Timer);
           m1Timer = null;
-          showToast('30일 시뮬레이션 완료! 두 방식의 격차를 확인해 보세요.');
+          showToast('30일 시뮬레이션 완료! 두 방식의 격차를 확인해 보세요.', 1);
         }
       }, 150);
     });
@@ -2345,7 +2347,7 @@
           dvcLabel.textContent = `저장: ${ver}`;
           report.className = 'gate-report pass';
           report.innerHTML = `<strong>✅ 검증 통과 (Schema Check PASS)</strong><br/>모든 항목(온도 ${temp.toFixed(1)}°C, pH ${ph.toFixed(1)}, 수분 ${moist.toFixed(1)}%, 미생물 정상)이 기준에 부합하여 <strong>DVC 버전(${ver})</strong>으로 등록되고 학습 파이프라인으로 이동했습니다.`;
-          showToast(`정상 데이터 통과! DVC ${ver} 저장 완료`);
+          showToast(`정상 데이터 통과! DVC ${ver} 저장 완료`, 2);
           // 도착한 패킷은 DVC 박스로 흡수되며 사라지고, 버전 라벨만 남긴다
           setTimeout(() => { if (runToken === m2RunToken) packet.style.opacity = '0'; }, 460);
         } else {
@@ -2358,7 +2360,7 @@
 
           report.className = 'gate-report fail';
           report.innerHTML = `<strong>🚫 불량 데이터 자동 차단 (Schema Check FAIL)</strong><ul style="margin:6px 0 0; padding-left:18px;">${errors.map(e => `<li>${e}</li>`).join('')}</ul>`;
-          showToast('불량 데이터가 감지되어 학습 진입을 자동 차단했습니다!');
+          showToast('불량 데이터가 감지되어 학습 진입을 자동 차단했습니다!', 2);
           // 차단된 패킷도 격리함 안의 문구를 가리지 않도록 흡수시킨다
           setTimeout(() => { if (runToken === m2RunToken) packet.style.opacity = '0'; }, 460);
         }
@@ -2433,7 +2435,7 @@
         m3RenderTable();
         showToast(newStage === 'Production'
           ? `🚀 ${runId} 모델이 공장 라인(Production)으로 승격되었습니다!`
-          : `🧪 ${runId} 모델이 시생산(Staging)에 등록되었습니다.`);
+          : `🧪 ${runId} 모델이 시생산(Staging)에 등록되었습니다.`, 3);
       }
     }
 
@@ -2462,7 +2464,7 @@
         stage: 'None'
       });
       m3RenderTable();
-      showToast(`실험 완료! ${newId} (F1: ${f1.toFixed(3)}) 기록됨`);
+      showToast(`실험 완료! ${newId} (F1: ${f1.toFixed(3)}) 기록됨`, 3);
     });
 
     document.getElementById('m3RollbackBtn').addEventListener('click', () => {
@@ -2475,7 +2477,7 @@
         const rolledBackTo = prevProd.id;
         m3PrevProdId = curProd.id;
         m3RenderTable();
-        showToast(`⏪ 긴급 롤백 완료! 공장 라인이 ${rolledBackTo} 모델로 안전하게 복구되었습니다.`);
+        showToast(`⏪ 긴급 롤백 완료! 공장 라인이 ${rolledBackTo} 모델로 안전하게 복구되었습니다.`, 3);
       }
     });
 
@@ -2515,7 +2517,7 @@
       });
 
       document.getElementById('m4DockerMsg').innerHTML = '<strong style="color:var(--emerald-dark);">✅ 해결 완료:</strong> 코드+파이썬+라이브러리를 식품 밀폐용기(Docker 컨테이너)에 통째로 담아 노트북·공장 PC·클라우드 어디서든 100% 동일하게 실행됩니다.';
-      showToast('Docker 밀폐용기 패키징으로 3개 환경 모두 정상 배포되었습니다!');
+      showToast('Docker 밀폐용기 패키징으로 3개 환경 모두 정상 배포되었습니다!', 4);
     });
 
     // 서빙 패턴 토글
@@ -2552,7 +2554,7 @@
 
     document.getElementById('m4InjectDefectBtn').addEventListener('click', () => {
       m4SpawnItem(true);
-      showToast('이물 불량품이 컨베이어 벨트에 투입되었습니다!');
+      showToast('이물 불량품이 컨베이어 벨트에 투입되었습니다!', 4);
     });
 
     let m4CanvasInfo = null;
@@ -2705,7 +2707,7 @@
               <td>${r.act}</td>
             </tr>
           `).join('');
-          showToast('아침 06:00 원료 COA 일괄 배치 리포트가 생성되었습니다!');
+          showToast('아침 06:00 원료 COA 일괄 배치 리포트가 생성되었습니다!', 4);
         }
       }, 180);
     });
@@ -2838,7 +2840,7 @@
       const s4 = document.getElementById('m5Step4');
 
       s1.className = 'retrain-node alert';
-      showToast('🚨 PSI 임계치 초과! 자동 재학습 파이프라인을 가동합니다.');
+      showToast('🚨 PSI 임계치 초과! 자동 재학습 파이프라인을 가동합니다.', 5);
 
       setTimeout(() => { s1.className = 'retrain-node done'; s2.className = 'retrain-node active'; }, 800);
       setTimeout(() => { s2.className = 'retrain-node done'; s3.className = 'retrain-node active'; }, 1600);
@@ -2854,7 +2856,7 @@
         document.getElementById('m5ModelVer').textContent = `v${m5Version.toFixed(1)} (재학습됨)`;
         m5IsRetraining = false;
         m5DrawDrift();
-        showToast(`✅ 신규 모델 v${m5Version.toFixed(1)} 교체 완료! 드리프트 지표가 정상화되었습니다.`);
+        showToast(`✅ 신규 모델 v${m5Version.toFixed(1)} 교체 완료! 드리프트 지표가 정상화되었습니다.`, 5);
       }, 2500);
     }
 
@@ -2979,9 +2981,9 @@
       ta.select();
       try {
         document.execCommand('copy');
-        showToast('📋 맞춤형 도입 로드맵이 클립보드에 복사되었습니다!');
+        showToast('📋 맞춤형 도입 로드맵이 클립보드에 복사되었습니다!', 6);
       } catch (e) {
-        showToast('복사에 실패했습니다. 화면 내용을 직접 드래그해 복사해 주세요.');
+        showToast('복사에 실패했습니다. 화면 내용을 직접 드래그해 복사해 주세요.', 6);
       }
       document.body.removeChild(ta);
     });
@@ -3094,7 +3096,7 @@
           m6AnsweredCount++;
           document.getElementById('m6QuizScoreBadge').textContent = `점수: ${m6QuizScore} / 5`;
           if (m6AnsweredCount === 5) {
-            showToast(`퀴즈 완료! 총 5문항 중 ${m6QuizScore}문항을 맞추셨습니다.`);
+            showToast(`퀴즈 완료! 총 5문항 중 ${m6QuizScore}문항을 맞추셨습니다.`, 6);
           }
         });
       });
@@ -3102,7 +3104,7 @@
 
     document.getElementById('m6ResetQuizBtn').addEventListener('click', () => {
       m6RenderQuiz();
-      showToast('퀴즈가 초기화되었습니다.');
+      showToast('퀴즈가 초기화되었습니다.', 6);
     });
 
     /* ========================================================================

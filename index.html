@@ -1959,6 +1959,14 @@
 
     let currentModule = 1;
     function switchModule(num) {
+      // 모듈 전환 시 직전 모듈의 하단 토스트/알림 잔류 제거
+      clearTimeout(toastTimer);
+      const toastBox = document.getElementById('toastBox');
+      if (toastBox) {
+        toastBox.classList.remove('show');
+        toastBox.textContent = '';
+      }
+
       currentModule = num;
       document.querySelectorAll('.module-panel').forEach(p => p.classList.remove('active'));
       document.getElementById(`module-${num}`).classList.add('active');
@@ -1981,6 +1989,15 @@
       btn.addEventListener('click', () => switchModule(Number(btn.dataset.module)));
     });
     document.getElementById('openDrawerBtn').addEventListener('click', openDrawer);
+
+    // ESC 키로 열려 있는 심화 학습 자료 서랍 닫기
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' && e.key !== 'Esc') return;
+      if (document.getElementById('resourceDrawer').classList.contains('open')) {
+        e.preventDefault();
+        closeDrawer();
+      }
+    });
 
     // 핵심 용어 툴팁 이벤트 위임
     document.querySelectorAll('.glossary-chips').forEach(group => {
@@ -2207,6 +2224,7 @@
        ======================================================================== */
     let m2TempOverride = null; // -999°C 같은 극단값 표현용
     let m2DvcCounter = 1;
+    let m2RunToken = 0; // 연속 실행 시 이전 애니메이션 결과가 덮어쓰지 않도록 하는 토큰
 
     function m2SyncDisplays() {
       const temp = m2TempOverride !== null ? m2TempOverride : parseFloat(document.getElementById('m2TempSlider').value);
@@ -2296,14 +2314,25 @@
       const gateIcon = document.getElementById('m2GateIcon');
       const report = document.getElementById('m2Report');
 
+      // 실행마다 직전 결과를 초기화: DVC 라벨을 비우고 패킷을 출발지로 되돌린다
+      const runToken = ++m2RunToken;
+      const dvcLabel = document.getElementById('m2DvcVer');
+      dvcLabel.textContent = '버전 대기중';
+
+      packet.style.transition = 'none';
+      packet.style.opacity = '1';
+      packet.setAttribute('transform', 'translate(52, 82)');
+      void packet.getBoundingClientRect(); // 리플로우 강제 → 항상 출발지에서 다시 출발
+      packet.style.transition = 'transform 0.45s ease, opacity 0.3s ease';
+
       // 1단계: 패킷을 중앙 게이트로 이동
-      packet.style.transition = 'transform 0.45s ease';
       packet.setAttribute('transform', 'translate(210, 82)');
       packetRect.setAttribute('fill', '#2563eb');
       gateLamp.setAttribute('fill', '#f59e0b');
       gateIcon.textContent = '…';
 
       setTimeout(() => {
+        if (runToken !== m2RunToken) return; // 더 새로운 실행이 있으면 이 결과는 버린다
         if (passed) {
           gateBox.setAttribute('stroke', '#10b981');
           gateBox.setAttribute('fill', '#ecfdf5');
@@ -2313,10 +2342,12 @@
           packet.setAttribute('transform', 'translate(362, 82)');
 
           const ver = `dvc-v1.${m2DvcCounter++}`;
-          document.getElementById('m2DvcVer').textContent = `저장: ${ver}`;
+          dvcLabel.textContent = `저장: ${ver}`;
           report.className = 'gate-report pass';
           report.innerHTML = `<strong>✅ 검증 통과 (Schema Check PASS)</strong><br/>모든 항목(온도 ${temp.toFixed(1)}°C, pH ${ph.toFixed(1)}, 수분 ${moist.toFixed(1)}%, 미생물 정상)이 기준에 부합하여 <strong>DVC 버전(${ver})</strong>으로 등록되고 학습 파이프라인으로 이동했습니다.`;
           showToast(`정상 데이터 통과! DVC ${ver} 저장 완료`);
+          // 도착한 패킷은 DVC 박스로 흡수되며 사라지고, 버전 라벨만 남긴다
+          setTimeout(() => { if (runToken === m2RunToken) packet.style.opacity = '0'; }, 460);
         } else {
           gateBox.setAttribute('stroke', '#f43f5e');
           gateBox.setAttribute('fill', '#fff1f2');
@@ -2328,6 +2359,8 @@
           report.className = 'gate-report fail';
           report.innerHTML = `<strong>🚫 불량 데이터 자동 차단 (Schema Check FAIL)</strong><ul style="margin:6px 0 0; padding-left:18px;">${errors.map(e => `<li>${e}</li>`).join('')}</ul>`;
           showToast('불량 데이터가 감지되어 학습 진입을 자동 차단했습니다!');
+          // 차단된 패킷도 격리함 안의 문구를 가리지 않도록 흡수시킨다
+          setTimeout(() => { if (runToken === m2RunToken) packet.style.opacity = '0'; }, 460);
         }
       }, 480);
     }

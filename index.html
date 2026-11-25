@@ -1,0 +1,3100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>식품산업 MLOps 모션 스튜디오 — 기초 · 실습 · 실무적용</title>
+  <!-- 선택적 웹폰트 로드 (오프라인 시 시스템 기본 폰트로 자동 대체) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ==========================================================================
+       1. 디자인 토큰 & 기본 리셋 (스마트 식품공학 실험실 & 모션 스튜디오 테마)
+       ========================================================================== */
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --border-light: #e2e8f0;
+      --border-strong: #cbd5e1;
+
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+
+      /* 일관된 상태 색상 시스템 */
+      --emerald: #10b981;
+      --emerald-bg: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      --emerald-dark: #047857;
+
+      --amber: #f59e0b;
+      --amber-bg: #fffbeb;
+      --amber-border: #fde68a;
+      --amber-dark: #b45309;
+
+      --coral: #f43f5e;
+      --coral-bg: #fff1f2;
+      --coral-border: #fecdd3;
+      --coral-dark: #be123c;
+
+      --blue: #2563eb;
+      --blue-bg: #eff6ff;
+      --blue-border: #bfdbfe;
+      --blue-dark: #1d4ed8;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
+
+      --font-sans: 'IBM Plex Sans KR', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    button, input, select {
+      font-family: inherit;
+    }
+
+    /* ==========================================================================
+       2. 상단 헤더 & 스텝 네비게이션
+       ========================================================================== */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .header-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0;
+      color: var(--text-main);
+    }
+
+    .brand-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-pill {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+      background: var(--blue-bg);
+      border: 1px solid var(--blue-border);
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+
+    /* 스텝 네비게이션 바 */
+    .nav-wrapper {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .step-nav {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+
+    .step-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light);
+      background: var(--bg-page);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      min-height: 58px;
+    }
+
+    .step-btn:hover {
+      border-color: var(--blue-border);
+      background: var(--blue-bg);
+      color: var(--blue-dark);
+    }
+
+    .step-btn.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .step-num {
+      font-size: 0.7rem;
+      font-weight: 700;
+      opacity: 0.85;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .step-label {
+      font-size: 0.83rem;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    /* ==========================================================================
+       3. 메인 컨테이너 & 공통 컴포넌트
+       ========================================================================== */
+    .main-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+    }
+
+    .module-panel {
+      display: none;
+      animation: fadeSlideIn 0.3s ease;
+    }
+
+    .module-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .module-header {
+      margin-bottom: 18px;
+    }
+
+    .module-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      background: var(--blue-bg);
+      border: 1px solid var(--blue-border);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .module-title {
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin: 0 0 6px;
+      letter-spacing: -0.02em;
+    }
+
+    .module-desc {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* 1분 현장 비유 배너 */
+    .analogy-card {
+      background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+      border: 1px solid var(--blue-border);
+      border-left: 5px solid var(--blue);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .analogy-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .analogy-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      margin: 0 0 4px;
+    }
+
+    .analogy-text {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    /* 공통 카드 */
+    .sim-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+    }
+
+    .sim-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .sim-card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 버튼 스타일 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
+      min-height: 40px;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.22);
+    }
+
+    .btn-primary:hover {
+      background: var(--blue-dark);
+    }
+
+    .btn-emerald {
+      background: var(--emerald);
+      color: #fff;
+    }
+
+    .btn-emerald:hover {
+      background: var(--emerald-dark);
+    }
+
+    .btn-coral {
+      background: var(--coral);
+      color: #fff;
+    }
+
+    .btn-coral:hover {
+      background: var(--coral-dark);
+    }
+
+    .btn-amber {
+      background: var(--amber);
+      color: #fff;
+    }
+
+    .btn-amber:hover {
+      background: var(--amber-dark);
+    }
+
+    .btn-outline {
+      background: var(--bg-surface);
+      border-color: var(--border-strong);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-subtle);
+      border-color: var(--text-muted);
+    }
+
+    .btn-sm {
+      padding: 6px 11px;
+      font-size: 0.8rem;
+      min-height: 32px;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* 상태 배지 */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    .badge-emerald { background: var(--emerald-bg); color: var(--emerald-dark); border: 1px solid var(--emerald-border); }
+    .badge-amber { background: var(--amber-bg); color: var(--amber-dark); border: 1px solid var(--amber-border); }
+    .badge-coral { background: var(--coral-bg); color: var(--coral-dark); border: 1px solid var(--coral-border); }
+    .badge-blue { background: var(--blue-bg); color: var(--blue-dark); border: 1px solid var(--blue-border); }
+    .badge-slate { background: var(--bg-subtle); color: var(--text-secondary); border: 1px solid var(--border-light); }
+
+    /* 핵심 용어 툴팁 섹션 */
+    .glossary-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    .glossary-header {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin: 0 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .glossary-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .term-chip {
+      position: relative;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-strong);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .term-chip:hover, .term-chip.active {
+      background: var(--blue-bg);
+      border-color: var(--blue);
+      color: var(--blue-dark);
+    }
+
+    .term-detail-box {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: var(--bg-page);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-light);
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      min-height: 46px;
+    }
+
+    .term-detail-box strong {
+      color: var(--blue-dark);
+    }
+
+    /* 하단 이전/다음 모듈 네비게이션 */
+    .module-footer-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    /* ==========================================================================
+       4. 모듈별 전용 레이아웃 & 애니메이션 스타일
+       ========================================================================== */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .kpi-box {
+      background: var(--bg-page);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+    }
+
+    .kpi-label {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .kpi-val {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .canvas-wrap {
+      width: 100%;
+      position: relative;
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Module 1: 톱니바퀴 & 순환 파이프라인 애니메이션 */
+    .compare-box {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      background: var(--bg-page);
+    }
+
+    .compare-box.mlops-side {
+      border-color: var(--blue-border);
+      background: #f8fbff;
+    }
+
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spinReverse {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -40; }
+    }
+
+    .gear-spin { transform-origin: center; animation: spinSlow 8s linear infinite; }
+    .gear-spin-rev { transform-origin: center; animation: spinReverse 8s linear infinite; }
+    .pipe-flow { stroke-dasharray: 8 6; animation: dashFlow 1.2s linear infinite; }
+
+    /* Module 2: 데이터 게이트웨이 */
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .control-group {
+      margin-bottom: 12px;
+    }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+
+    .gate-report {
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light);
+      background: var(--bg-page);
+      font-size: 0.88rem;
+      margin-top: 14px;
+    }
+
+    .gate-report.pass {
+      background: var(--emerald-bg);
+      border-color: var(--emerald-border);
+      color: var(--emerald-dark);
+    }
+
+    .gate-report.fail {
+      background: var(--coral-bg);
+      border-color: var(--coral-border);
+      color: var(--coral-dark);
+    }
+
+    /* Module 3: 실험 추적 테이블 & 레지스트리 */
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 680px;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    th {
+      background: var(--bg-subtle);
+      font-weight: 700;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr.row-prod {
+      background: #f0fdf4;
+    }
+
+    .factory-registry-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      margin-bottom: 18px;
+    }
+
+    .registry-pulse {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulseGreen 1.8s infinite;
+    }
+
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .checkbox-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 10px 0 14px;
+    }
+
+    .check-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-page);
+      font-size: 0.84rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* Module 4: Docker & 서빙 패턴 토글 */
+    .segment-toggle {
+      display: inline-flex;
+      background: var(--bg-subtle);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light);
+      gap: 4px;
+    }
+
+    .segment-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .segment-btn.active {
+      background: var(--bg-surface);
+      color: var(--blue-dark);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Module 5: 재학습 루프 스텝 */
+    .retrain-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .retrain-node {
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light);
+      background: var(--bg-page);
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .retrain-node.active {
+      border-color: var(--blue);
+      background: var(--blue-bg);
+      color: var(--blue-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .retrain-node.alert {
+      border-color: var(--coral);
+      background: var(--coral-bg);
+      color: var(--coral-dark);
+    }
+
+    .retrain-node.done {
+      border-color: var(--emerald);
+      background: var(--emerald-bg);
+      color: var(--emerald-dark);
+    }
+
+    /* Module 6: 실무 설계기 & 퀴즈 */
+    .select-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .choice-card {
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-light);
+      background: var(--bg-page);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.18s ease;
+    }
+
+    .choice-card:hover {
+      border-color: var(--blue-border);
+      background: var(--blue-bg);
+    }
+
+    .choice-card.selected {
+      border-color: var(--blue);
+      background: var(--blue-bg);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+
+    .roadmap-stage {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      background: var(--bg-page);
+      position: relative;
+    }
+
+    .roadmap-stage h4 {
+      margin: 0 0 6px;
+      font-size: 0.92rem;
+      color: var(--blue-dark);
+    }
+
+    .roadmap-stage ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .quiz-item {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+      background: var(--bg-page);
+    }
+
+    .quiz-q {
+      font-weight: 700;
+      font-size: 0.94rem;
+      margin: 0 0 10px;
+    }
+
+    .quiz-options {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quiz-opt {
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-strong);
+      background: var(--bg-surface);
+      text-align: left;
+      font-size: 0.87rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .quiz-opt:hover:not(:disabled) {
+      background: var(--blue-bg);
+      border-color: var(--blue);
+    }
+
+    .quiz-opt.correct {
+      background: var(--emerald-bg);
+      border-color: var(--emerald);
+      color: var(--emerald-dark);
+      font-weight: 700;
+    }
+
+    .quiz-opt.wrong {
+      background: var(--coral-bg);
+      border-color: var(--coral);
+      color: var(--coral-dark);
+    }
+
+    .quiz-explain {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      display: none;
+    }
+
+    /* ==========================================================================
+       5. 참고 학습 자료 서랍 (Drawer) & 토스트 & 푸터
+       ========================================================================== */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      z-index: 90;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .drawer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .resource-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(460px, 92vw);
+      background: var(--bg-surface);
+      z-index: 100;
+      box-shadow: var(--shadow-lg);
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .resource-drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-body {
+      padding: 18px 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .resource-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      background: var(--bg-page);
+      transition: all 0.18s ease;
+    }
+
+    .resource-card:hover {
+      border-color: var(--blue);
+      background: var(--blue-bg);
+      transform: translateY(-2px);
+    }
+
+    .resource-card h4 {
+      margin: 6px 0 4px;
+      font-size: 0.94rem;
+      color: var(--text-main);
+    }
+
+    .resource-card p {
+      margin: 0;
+      font-size: 0.81rem;
+      color: var(--text-secondary);
+    }
+
+    /* 인앱 토스트 메시지 (alert 대체) */
+    .toast-box {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #0f172a;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 120;
+      max-width: 90vw;
+      text-align: center;
+    }
+
+    .toast-box.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .app-footer {
+      border-top: 1px solid var(--border-light);
+      background: var(--bg-surface);
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    .footer-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       6. 반응형 미디어 쿼리 (태블릿 & 모바일 완벽 대응)
+       ========================================================================== */
+    @media (max-width: 960px) {
+      .step-nav {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .retrain-steps {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .step-nav {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .select-grid {
+        grid-template-columns: 1fr;
+      }
+      .module-title {
+        font-size: 1.3rem;
+      }
+      .sim-card {
+        padding: 16px;
+      }
+      .header-inner {
+        padding: 10px 14px;
+      }
+      .main-container {
+        padding: 16px 14px 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       상단 헤더
+       ======================================================================== -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            <circle cx="12" cy="12" r="4"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">식품산업 MLOps 모션 스튜디오</h1>
+          <p class="brand-sub">QA/QC · 생산기술 · R&amp;D · HACCP 실무자를 위한 인터랙티브 교육 웹앱</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <span class="progress-pill" id="progressPill">Module 1 / 6</span>
+        <button class="btn btn-outline btn-sm" id="openDrawerBtn" type="button">
+          📚 심화 학습 자료 6선
+        </button>
+      </div>
+    </div>
+
+    <!-- 6단계 모듈 네비게이션 -->
+    <nav class="nav-wrapper" aria-label="교육 모듈 선택">
+      <div class="step-nav" id="stepNav">
+        <button class="step-btn active" data-module="1" type="button">
+          <span class="step-num">Module 1</span>
+          <span class="step-label">왜 MLOps인가?</span>
+        </button>
+        <button class="step-btn" data-module="2" type="button">
+          <span class="step-num">Module 2</span>
+          <span class="step-label">데이터 검증 게이트</span>
+        </button>
+        <button class="step-btn" data-module="3" type="button">
+          <span class="step-num">Module 3</span>
+          <span class="step-label">실험 추적 · 레지스트리</span>
+        </button>
+        <button class="step-btn" data-module="4" type="button">
+          <span class="step-num">Module 4</span>
+          <span class="step-label">패키징 · 배포 방식</span>
+        </button>
+        <button class="step-btn" data-module="5" type="button">
+          <span class="step-num">Module 5</span>
+          <span class="step-label">모니터링 · 드리프트</span>
+        </button>
+        <button class="step-btn" data-module="6" type="button">
+          <span class="step-num">Module 6</span>
+          <span class="step-label">실무 설계기 · 퀴즈</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ========================================================================
+       메인 콘텐츠 영역 (Module 1 ~ 6)
+       ======================================================================== -->
+  <main class="main-container">
+
+    <!-- ======================================================================
+         MODULE 1: 왜 MLOps인가? (실험실 모델 vs 공장 운영)
+         ====================================================================== -->
+    <section class="module-panel active" id="module-1">
+      <div class="module-header">
+        <span class="module-badge">Module 1 · 핵심 개념 체감</span>
+        <h2 class="module-title">왜 MLOps인가? — 실험실 모델(ML) vs 공장 운영(MLOps)</h2>
+        <p class="module-desc">노트북에서 만든 96% 정확도 모델이 실제 식품 공장에 투입되었을 때 벌어지는 차이를 30일 시뮬레이션으로 확인합니다.</p>
+      </div>
+
+      <div class="analogy-card">
+        <div class="analogy-icon">🧪</div>
+        <div>
+          <p class="analogy-title">1분 현장 비유 — 신제품 시제품 레시피 vs 대량생산 HACCP 표준공정</p>
+          <p class="analogy-text">
+            연구소 주방에서 최고의 재료로 한 번 맛있게 만든 시제품이 <strong>일반 ML 모델</strong>이라면,
+            계절마다 원물 당도·수분이 바뀌고 설비 온도가 흔들려도 매일 10만 개를 균일한 품질로 뽑아내는 자동화 생산·관리 체계가 <strong>MLOps</strong>입니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="sim-card">
+        <div class="sim-card-header">
+          <h3 class="sim-card-title">⚙️ 30일 공장 투입 모션 시뮬레이터 (살균·이물 불량 탐지)</h3>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-primary" id="m1RunBtn" type="button">▶ 공장에 1개월 투입 시뮬레이션</button>
+            <button class="btn btn-outline" id="m1ResetBtn" type="button">↺ 초기화</button>
+          </div>
+        </div>
+
+        <!-- 좌/우 아키텍처 모션 비교 -->
+        <div class="grid-2" style="margin-bottom:18px;">
+          <!-- 왼쪽: 노트북 ML -->
+          <div class="compare-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <strong>💻 수동 노트북 모델 (ML Only)</strong>
+              <span class="badge badge-amber" id="m1MlStatus">대기 중 (지난달 96%)</span>
+            </div>
+            <svg viewBox="0 0 360 110" width="100%" height="110" aria-label="노트북 수동 모델 구조">
+              <rect x="12" y="22" width="105" height="64" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+              <text x="64" y="49" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">주피터 노트북</text>
+              <text x="64" y="67" text-anchor="middle" font-size="10" fill="#64748b">지난달 데이터 학습</text>
+              <line x1="117" y1="54" x2="178" y2="54" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 5"/>
+              <polygon points="178,49 188,54 178,59" fill="#94a3b8"/>
+              <rect x="192" y="22" width="154" height="64" rx="10" fill="#fff" stroke="#f59e0b" stroke-width="2" id="m1MlFactoryBox"/>
+              <text x="269" y="47" text-anchor="middle" font-size="11" font-weight="700" fill="#0f172a">공장 라인 투입</text>
+              <text x="269" y="66" text-anchor="middle" font-size="10" fill="#b45309" id="m1MlEventText">재학습·감시 체계 없음</text>
+            </svg>
+          </div>
+
+          <!-- 오른쪽: MLOps 순환 파이프라인 -->
+          <div class="compare-box mlops-side">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <strong>🔄 MLOps 자동 운영 파이프라인</strong>
+              <span class="badge badge-emerald" id="m1MlopsStatus">정상 가동 (94~96% 유지)</span>
+            </div>
+            <svg viewBox="0 0 360 110" width="100%" height="110" aria-label="MLOps 순환 파이프라인 애니메이션">
+              <!-- 순환 파이프 -->
+              <rect x="24" y="20" width="312" height="70" rx="35" fill="none" stroke="#bfdbfe" stroke-width="8"/>
+              <rect x="24" y="20" width="312" height="70" rx="35" fill="none" stroke="#2563eb" stroke-width="3" class="pipe-flow"/>
+              <!-- 회전 톱니바퀴 2개 -->
+              <g transform="translate(180,55)">
+                <g class="gear-spin">
+                  <circle cx="0" cy="0" r="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="4 3"/>
+                  <circle cx="0" cy="0" r="5" fill="#2563eb"/>
+                </g>
+              </g>
+              <!-- 5단계 노드 -->
+              <g font-size="9.5" font-weight="700" text-anchor="middle">
+                <rect x="8" y="8" width="66" height="22" rx="11" fill="#2563eb"/>
+                <text x="41" y="22" fill="#fff">1.데이터검증</text>
+
+                <rect x="147" y="8" width="66" height="22" rx="11" fill="#2563eb"/>
+                <text x="180" y="22" fill="#fff">2.자동학습</text>
+
+                <rect x="286" y="8" width="66" height="22" rx="11" fill="#2563eb"/>
+                <text x="319" y="22" fill="#fff">3.배포서빙</text>
+
+                <rect x="240" y="80" width="76" height="22" rx="11" fill="#10b981"/>
+                <text x="278" y="94" fill="#fff">4.성능감시</text>
+
+                <rect x="44" y="80" width="76" height="22" rx="11" fill="#10b981"/>
+                <text x="82" y="94" fill="#fff">5.자동재학습</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 실시간 KPI 지표 -->
+        <div class="kpi-grid">
+          <div class="kpi-box">
+            <div class="kpi-label">시뮬레이션 경과일</div>
+            <div class="kpi-val" id="m1DayVal" style="color:var(--blue-dark);">Day 0 / 30</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">노트북 ML 불량 탐지율</div>
+            <div class="kpi-val" id="m1MlAccVal" style="color:var(--coral);">96.0%</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">MLOps 불량 탐지율</div>
+            <div class="kpi-val" id="m1MlopsAccVal" style="color:var(--emerald-dark);">96.0%</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-label">오경보율 (ML vs MLOps)</div>
+            <div class="kpi-val" id="m1FpVal" style="font-size:1.1rem; color:var(--text-main);">2.0% vs 2.0%</div>
+          </div>
+        </div>
+
+        <!-- 실시간 차트 캔버스 -->
+        <div class="canvas-wrap" style="height: 290px;">
+          <canvas id="m1ChartCanvas"></canvas>
+        </div>
+        <div id="m1EventBanner" style="margin-top:12px; font-size:0.86rem; color:var(--text-secondary); padding:10px 14px; background:var(--bg-subtle); border-radius:var(--radius-sm);">
+          💡 <strong>[공장에 1개월 투입 시뮬레이션]</strong> 버튼을 눌러 하절기 원물 수분 변화(Day 8), 신규 공급사 로트(Day 17), 센서 노후화(Day 24) 발생 시 두 시스템의 차이를 확인하세요.
+        </div>
+      </div>
+
+      <!-- 핵심 용어 툴팁 -->
+      <div class="glossary-box">
+        <p class="glossary-header">🔍 핵심 용어 툴팁 (용어를 클릭하거나 터치해 보세요)</p>
+        <div class="glossary-chips" data-glossary="m1">
+          <button class="term-chip active" type="button" data-term="MLOps (Machine Learning Operations)" data-desc="머신러닝 모델을 한 번 만들고 끝내는 것이 아니라, 공장 현장에서 매일 안정적으로 데이터를 검증·학습·배포·감시·재학습하도록 운영하는 표준 자동화 체계입니다.">MLOps</button>
+          <button class="term-chip" type="button" data-term="모델 열화 (Model Degradation)" data-desc="시간이 지나면서 계절·원물 산지·설비 컨디션이 변해 기존 AI 모델의 예측 정확도가 서서히 떨어지는 현상입니다.">모델 열화 (Degradation)</button>
+          <button class="term-chip" type="button" data-term="오경보율 (False Positive Rate)" data-desc="실제로는 정상 식품인데 AI가 '불량'으로 잘못 판정해 정상 제품을 폐기하거나 라인을 멈추게 만드는 비율입니다.">오경보율 (False Positive)</button>
+          <button class="term-chip" type="button" data-term="CI/CD/CT" data-desc="코드 통합(CI), 자동 배포(CD)에 더해 머신러닝에서는 새 데이터로 모델을 자동 재학습하는 지속적 학습(CT, Continuous Training)이 핵심입니다.">CI/CD/CT</button>
+        </div>
+        <div class="term-detail-box" id="glossary-m1">
+          <strong>MLOps (Machine Learning Operations):</strong> 머신러닝 모델을 한 번 만들고 끝내는 것이 아니라, 공장 현장에서 매일 안정적으로 데이터를 검증·학습·배포·감시·재학습하도록 운영하는 표준 자동화 체계입니다.
+        </div>
+      </div>
+
+      <div class="module-footer-nav">
+        <span style="font-size:0.84rem; color:var(--text-muted);">1단계 완료 후 다음 단계로 이동하세요.</span>
+        <button class="btn btn-primary" type="button" onclick="switchModule(2)">다음: Module 2. 데이터 검증 게이트 →</button>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         MODULE 2: 데이터 검증 게이트웨이 (DVC · Pandera 개념)
+         ====================================================================== -->
+    <section class="module-panel" id="module-2">
+      <div class="module-header">
+        <span class="module-badge">Module 2 · 데이터 품질 방어선</span>
+        <h2 class="module-title">데이터 검증 게이트웨이 (DVC · Pandera 개념)</h2>
+        <p class="module-desc">살균 공정 및 원료 입고 데이터가 AI 학습에 들어가기 전, 불량·오류 데이터를 자동으로 차단하는 스키마 검증 게이트를 체험합니다.</p>
+      </div>
+
+      <div class="analogy-card">
+        <div class="analogy-icon">🛡️</div>
+        <div>
+          <p class="analogy-title">1분 현장 비유 — 원료 입고 검수(IQC) &amp; 금속검출기</p>
+          <p class="analogy-text">
+            썩은 원료나 이물이 섞인 원료를 생산 라인에 넣으면 전체 로트가 폐기되듯, <strong>오류 센서값(-999°C)이나 단위 혼용(°F)</strong>이 AI 학습에 들어가면 모델이 망가집니다.
+            <strong>Pandera(데이터 검수 기준서)</strong>가 불량 데이터를 입구에서 자동 차단하고, <strong>DVC</strong>가 통과된 정상 데이터에 로트 번호(버전)를 부여합니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="sim-card">
+        <div class="sim-card-header">
+          <h3 class="sim-card-title">🔬 살균 공정 · 원료 입고 데이터 검수 시뮬레이터</h3>
+          <span class="badge badge-blue">정상 기준: 온도 70~95°C | pH 4.0~6.8 | 수분 10~85% | 미생물값 필수</span>
+        </div>
+
+        <!-- 프리셋 버튼 -->
+        <div class="preset-row">
+          <button class="btn btn-emerald btn-sm" type="button" onclick="m2ApplyPreset('normal')">✅ 정상 데이터</button>
+          <button class="btn btn-coral btn-sm" type="button" onclick="m2ApplyPreset('sensor')">❌ 센서 결측/오류 (-999°C)</button>
+          <button class="btn btn-amber btn-sm" type="button" onclick="m2ApplyPreset('unit')">⚠️ 단위 혼용 (185°F 입력)</button>
+          <button class="btn btn-coral btn-sm" type="button" onclick="m2ApplyPreset('label')">🚫 라벨(미생물값) 누락</button>
+        </div>
+
+        <div class="grid-2">
+          <!-- 입력 컨트롤 -->
+          <div style="background:var(--bg-page); border:1px solid var(--border-light); border-radius:var(--radius-md); padding:16px;">
+            <div class="control-group">
+              <div class="control-label">
+                <span>살균온도 (°C 기준 입력)</span>
+                <span id="m2TempDisp" style="color:var(--blue-dark);">85.0 °C</span>
+              </div>
+              <input type="range" id="m2TempSlider" min="-100" max="200" step="0.5" value="85" />
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <span>pH (산도)</span>
+                <span id="m2PhDisp" style="color:var(--blue-dark);">6.4</span>
+              </div>
+              <input type="range" id="m2PhSlider" min="1.0" max="12.0" step="0.1" value="6.4" />
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <span>수분함량 (%)</span>
+                <span id="m2MoistDisp" style="color:var(--blue-dark);">68.0 %</span>
+              </div>
+              <input type="range" id="m2MoistSlider" min="0" max="110" step="1" value="68" />
+            </div>
+
+            <div class="control-group" style="display:flex; align-items:center; justify-content:space-between; padding-top:6px;">
+              <label style="font-size:0.85rem; font-weight:600; display:flex; align-items:center; gap:8px; cursor:pointer;">
+                <input type="checkbox" id="m2LabelMissing" />
+                미생물 검사값(정답 라벨) 누락 (Null)
+              </label>
+              <span id="m2MicroDisp" class="badge badge-emerald">120 CFU/g</span>
+            </div>
+
+            <div style="margin-top:14px;">
+              <button class="btn btn-primary" style="width:100%;" id="m2RunGateBtn" type="button">
+                🚀 파이프라인으로 데이터 투입 (Schema Check 실행)
+              </button>
+            </div>
+          </div>
+
+          <!-- SVG 게이트웨이 모션 시각화 -->
+          <div style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div style="background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-md); padding:12px;">
+              <svg viewBox="0 0 420 185" width="100%" height="185" id="m2GateSvg" aria-label="데이터 검증 게이트 애니메이션">
+                <!-- 파이프라인 레일 -->
+                <line x1="30" y1="82" x2="390" y2="82" stroke="#e2e8f0" stroke-width="10" stroke-linecap="round"/>
+                <!-- 차단 분기 레일 -->
+                <path d="M210,82 Q210,145 270,145 L350,145" fill="none" stroke="#fecdd3" stroke-width="6" stroke-dasharray="5 4"/>
+
+                <!-- 출발지: 센서/입고 -->
+                <rect x="10" y="54" width="84" height="56" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+                <text x="52" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">공장 센서</text>
+                <text x="52" y="95" text-anchor="middle" font-size="9.5" fill="#64748b">원료·살균 데이터</text>
+
+                <!-- 중앙: Pandera 게이트 -->
+                <rect x="165" y="34" width="90" height="96" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5" id="m2GateBox"/>
+                <text x="210" y="56" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1d4ed8">Schema Gate</text>
+                <text x="210" y="71" text-anchor="middle" font-size="9" fill="#475569">(Pandera)</text>
+                <circle cx="210" cy="100" r="14" fill="#cbd5e1" id="m2GateLamp"/>
+                <text x="210" y="104" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" id="m2GateIcon">?</text>
+
+                <!-- 도착지 1: 학습 파이프라인 -->
+                <rect x="315" y="54" width="95" height="56" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+                <text x="362" y="78" text-anchor="middle" font-size="10.5" font-weight="700" fill="#047857">DVC &amp; 학습</text>
+                <text x="362" y="95" text-anchor="middle" font-size="9.5" fill="#047857" id="m2DvcVer">버전 대기중</text>
+
+                <!-- 도착지 2: 격리/차단함 -->
+                <rect x="315" y="124" width="95" height="44" rx="8" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.8"/>
+                <text x="362" y="144" text-anchor="middle" font-size="10" font-weight="700" fill="#be123c">격리함 (차단)</text>
+                <text x="362" y="158" text-anchor="middle" font-size="8.5" fill="#be123c">학습 오염 방지</text>
+
+                <!-- 이동하는 데이터 패킷 -->
+                <g id="m2Packet" transform="translate(52, 82)">
+                  <rect x="-16" y="-12" width="32" height="24" rx="6" fill="#2563eb" id="m2PacketRect"/>
+                  <text x="0" y="4" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">DATA</text>
+                </g>
+              </svg>
+            </div>
+
+            <!-- 검수 결과 리포트 -->
+            <div class="gate-report" id="m2Report">
+              <strong>검증 대기 중:</strong> 위 프리셋 버튼을 누르거나 슬라이더를 조절한 뒤 <strong>[파이프라인으로 데이터 투입]</strong>을 클릭하세요.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 핵심 용어 툴팁 -->
+      <div class="glossary-box">
+        <p class="glossary-header">🔍 핵심 용어 툴팁</p>
+        <div class="glossary-chips" data-glossary="m2">
+          <button class="term-chip active" type="button" data-term="스키마 검증 (Schema Validation / Pandera)" data-desc="데이터의 컬럼명, 자료형, 허용 범위(예: 살균온도 70~95°C), 결측치 여부를 미리 규칙으로 정해두고 자동 검사하는 기술입니다.">Pandera (스키마 검증)</button>
+          <button class="term-chip" type="button" data-term="DVC (Data Version Control)" data-desc="코드에 Git이 있듯이, 학습용 대용량 데이터셋에 버전(로트 번호)을 붙여 '어느 시점 데이터로 학습했는지' 완벽히 추적하는 도구입니다.">DVC (데이터 버전관리)</button>
+          <button class="term-chip" type="button" data-term="GIGO (Garbage In, Garbage Out)" data-desc="쓰레기 데이터(오류 센서값, 단위 혼용)가 들어가면 아무리 좋은 AI 알고리즘을 써도 엉터리 예측 결과가 나온다는 원칙입니다.">GIGO 원칙</button>
+        </div>
+        <div class="term-detail-box" id="glossary-m2">
+          <strong>스키마 검증 (Schema Validation / Pandera):</strong> 데이터의 컬럼명, 자료형, 허용 범위(예: 살균온도 70~95°C), 결측치 여부를 미리 규칙으로 정해두고 자동 검사하는 기술입니다.
+        </div>
+      </div>
+
+      <div class="module-footer-nav">
+        <button class="btn btn-outline" type="button" onclick="switchModule(1)">← 이전: Module 1</button>
+        <button class="btn btn-primary" type="button" onclick="switchModule(3)">다음: Module 3. 실험 추적 · 레지스트리 →</button>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         MODULE 3: 실험 추적 & 모델 레지스트리 (MLflow 개념)
+         ====================================================================== -->
+    <section class="module-panel" id="module-3">
+      <div class="module-header">
+        <span class="module-badge">Module 3 · 실험 기록 및 버전 운영</span>
+        <h2 class="module-title">실험 추적 &amp; 모델 레지스트리 (MLflow 개념)</h2>
+        <p class="module-desc">수십 번의 모델 실험 결과를 엑셀이나 파일명(최종_진짜최종.pkl) 대신 체계적으로 기록하고, 안전하게 공장 라인에 승격·롤백합니다.</p>
+      </div>
+
+      <div class="analogy-card">
+        <div class="analogy-icon">📓</div>
+        <div>
+          <p class="analogy-title">1분 현장 비유 — R&amp;D 배합 연구노트(실험 추적) &amp; 표준배합서 승인대장(레지스트리)</p>
+          <p class="analogy-text">
+            배합비 테스트 결과를 모두 기록해 비교하는 것이 <strong>실험 추적(Experiment Tracking)</strong>이고,
+            우수한 레시피를 시생산(<strong>Staging</strong>) 거쳐 본생산(<strong>Production</strong>)으로 승격하며, 문제 발생 시 즉시 이전 배합으로 되돌리는(<strong>Rollback</strong>) 시스템이 <strong>모델 레지스트리</strong>입니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="sim-card">
+        <!-- 공장 라인 활성 모델 배지 현황판 -->
+        <div class="factory-registry-bar">
+          <div>
+            <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:4px;">🏭 현재 식품 공장 라인(Production) 활성 모델</div>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <span class="registry-pulse"></span>
+              <strong id="m3ActiveProdName" style="font-size:1.1rem;">RUN-001 · 로지스틱 회귀 (F1: 0.842)</strong>
+              <span class="badge badge-emerald" id="m3ActiveProdTag">Production 운영 중</span>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="font-size:0.8rem; color:#cbd5e1;" id="m3PrevProdInfo">이전 버전: 없음</span>
+            <button class="btn btn-amber btn-sm" id="m3RollbackBtn" type="button" disabled>⏪ 이전 버전 롤백 (Rollback)</button>
+          </div>
+        </div>
+
+        <!-- 인터랙티브 실험실 설정 -->
+        <div style="background:var(--bg-page); border:1px solid var(--border-light); border-radius:var(--radius-md); padding:16px; margin-bottom:18px;">
+          <div style="font-size:0.9rem; font-weight:700; margin-bottom:10px;">🧪 새 실험 구성 (프로바이오틱스 생존율 / 배합 품질 예측)</div>
+          <div class="grid-2" style="align-items:end;">
+            <div>
+              <label for="m3AlgoSelect" style="display:block; font-size:0.82rem; font-weight:600; margin-bottom:6px; color:var(--text-secondary);">알고리즘 선택</label>
+              <select id="m3AlgoSelect" style="width:100%; padding:10px 12px; border-radius:var(--radius-sm); border:1px solid var(--border-strong); background:#fff; font-size:0.9rem;">
+                <option value="logistic">로지스틱 회귀 (Logistic Regression) — 빠름/저비용</option>
+                <option value="rf">랜덤포레스트 (Random Forest) — 균형잡힌 성능</option>
+                <option value="xgb">XGBoost — 최고 정확도/다소 높은 연산</option>
+              </select>
+            </div>
+            <div>
+              <button class="btn btn-primary" style="width:100%;" id="m3RunExpBtn" type="button">▶ 실험 실행 및 MLflow 기록</button>
+            </div>
+          </div>
+
+          <div class="checkbox-grid">
+            <label class="check-pill"><input type="checkbox" class="m3-prep" value="결측치 보간" checked /> 결측치 보간</label>
+            <label class="check-pill"><input type="checkbox" class="m3-prep" value="이상치 제거" /> 센서 이상치 제거</label>
+            <label class="check-pill"><input type="checkbox" class="m3-prep" value="스케일링" /> 단위 스케일링</label>
+            <label class="check-pill"><input type="checkbox" class="m3-prep" value="배합비 파생변수" /> 배합비 파생변수 추가</label>
+          </div>
+        </div>
+
+        <!-- 실험 추적 로그 테이블 -->
+        <div style="font-size:0.9rem; font-weight:700; margin-bottom:8px;">📋 MLflow 실험 로그 &amp; 레지스트리 테이블</div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Run ID</th>
+                <th>알고리즘</th>
+                <th>F1-Score</th>
+                <th>추론속도 / 원가</th>
+                <th>전처리 파라미터</th>
+                <th>상태 (Stage)</th>
+                <th>레지스트리 작업</th>
+              </tr>
+            </thead>
+            <tbody id="m3LogBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 핵심 용어 툴팁 -->
+      <div class="glossary-box">
+        <p class="glossary-header">🔍 핵심 용어 툴팁</p>
+        <div class="glossary-chips" data-glossary="m3">
+          <button class="term-chip active" type="button" data-term="MLflow (실험 추적 도구)" data-desc="모델 학습 시 사용한 하이퍼파라미터, 데이터 버전, F1-Score 등의 성능 지표를 자동으로 표에 기록하고 비교해 주는 대표 오픈소스 도구입니다.">MLflow</button>
+          <button class="term-chip" type="button" data-term="모델 레지스트리 (Model Registry)" data-desc="검증된 모델 파일을 중앙 저장소에 등록하고 Staging(시생산) → Production(본생산) → Archived(보관) 단계를 관리하는 체계입니다.">Model Registry</button>
+          <button class="term-chip" type="button" data-term="롤백 (Rollback)" data-desc="새로 배포한 AI 모델이 현장에서 예상치 못한 오탐지를 일으킬 때, 단 한 번의 클릭으로 직전에 안정적이던 이전 버전 모델로 즉시 복구하는 기능입니다.">롤백 (Rollback)</button>
+        </div>
+        <div class="term-detail-box" id="glossary-m3">
+          <strong>MLflow (실험 추적 도구):</strong> 모델 학습 시 사용한 하이퍼파라미터, 데이터 버전, F1-Score 등의 성능 지표를 자동으로 표에 기록하고 비교해 주는 대표 오픈소스 도구입니다.
+        </div>
+      </div>
+
+      <div class="module-footer-nav">
+        <button class="btn btn-outline" type="button" onclick="switchModule(2)">← 이전: Module 2</button>
+        <button class="btn btn-primary" type="button" onclick="switchModule(4)">다음: Module 4. 패키징 · 배포 방식 →</button>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         MODULE 4: 패키징 & 배포 방식 (Docker · FastAPI · 실시간 vs 배치)
+         ====================================================================== -->
+    <section class="module-panel" id="module-4">
+      <div class="module-header">
+        <span class="module-badge">Module 4 · 현장 배포와 서빙</span>
+        <h2 class="module-title">패키징 &amp; 배포 방식 (Docker · FastAPI · 실시간 vs 배치)</h2>
+        <p class="module-desc">환경 차이로 인한 배포 오류를 막는 컨테이너(Docker) 개념과, 식품 공장의 두 가지 서빙 방식(실시간 API vs 배치)을 모션으로 비교합니다.</p>
+      </div>
+
+      <div class="analogy-card">
+        <div class="analogy-icon">🍱</div>
+        <div>
+          <p class="analogy-title">1분 현장 비유 — 표준 규격 밀폐용기(Docker) &amp; 즉석 조리(실시간) vs 새벽 일괄배송(배치)</p>
+          <p class="analogy-text">
+            "내 노트북에선 잘 됐는데 공장 PC에선 에러나요"를 막기 위해 코드·파이썬·라이브러리를 통째로 밀봉한 것이 <strong>Docker 컨테이너</strong>입니다.
+            또한 컨베이어 벨트 위 이물을 0.02초 만에 잡아내는 것은 <strong>실시간 API</strong>, 매일 아침 원료 성적서(COA) 100건을 한 번에 분석하는 것은 <strong>배치 예측</strong>입니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- 시각화 1: Docker 컨테이너 비유 -->
+      <div class="sim-card">
+        <div class="sim-card-header">
+          <h3 class="sim-card-title">📦 시각화 1. Docker 컨테이너 (식품 밀폐용기) 배포 비교</h3>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-coral btn-sm" id="m4DockerOffBtn" type="button">❌ 컨테이너 없이 코드만 복사</button>
+            <button class="btn btn-primary btn-sm" id="m4DockerOnBtn" type="button">📦 Docker 밀폐용기 패키징 배포</button>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 760 190" width="100%" height="190" style="background:#f8fafc; border-radius:12px; border:1px solid var(--border-light);" id="m4DockerSvg" aria-label="Docker 컨테이너 배포 비교 모션">
+          <!-- 왼쪽: 패키징 영역 -->
+          <rect x="20" y="25" width="230" height="140" rx="14" fill="#fff" stroke="#cbd5e1" stroke-width="2" id="m4PkgBorder"/>
+          <text x="135" y="48" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a" id="m4PkgTitle">개발자 노트북 환경</text>
+
+          <!-- 내용물 3요소 -->
+          <rect x="40" y="62" width="190" height="24" rx="6" fill="#dbeafe"/>
+          <text x="135" y="78" text-anchor="middle" font-size="10.5" font-weight="600" fill="#1e40af">예측 모델 코드 (model.py)</text>
+
+          <rect x="40" y="92" width="190" height="24" rx="6" fill="#e0f2fe"/>
+          <text x="135" y="108" text-anchor="middle" font-size="10.5" font-weight="600" fill="#0369a1">Python 3.11 런타임</text>
+
+          <rect x="40" y="122" width="190" height="24" rx="6" fill="#f1f5f9"/>
+          <text x="135" y="138" text-anchor="middle" font-size="10.5" font-weight="600" fill="#334155">Pandas 2.1 · XGBoost 2.0</text>
+
+          <!-- 밀폐용기 뚜껑/테두리 (Docker 활성화 시 표시) -->
+          <rect x="14" y="18" width="242" height="154" rx="16" fill="none" stroke="#2563eb" stroke-width="4" stroke-dasharray="10 4" opacity="0" id="m4SealFrame"/>
+
+          <!-- 화살표 -->
+          <line x1="265" y1="95" x2="365" y2="95" stroke="#2563eb" stroke-width="3" class="pipe-flow"/>
+          <polygon points="365,89 378,95 365,101" fill="#2563eb"/>
+          <text x="320" y="82" text-anchor="middle" font-size="10" font-weight="700" fill="#2563eb" id="m4ArrowLabel">배포 방식 선택</text>
+
+          <!-- 오른쪽: 3개 배포 대상 -->
+          <g transform="translate(395, 18)">
+            <rect x="0" y="0" width="345" height="44" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.8" id="m4Env1"/>
+            <text x="16" y="27" font-size="11.5" font-weight="700" fill="#0f172a">💻 연구원 노트북 (Windows)</text>
+            <text x="330" y="27" text-anchor="end" font-size="11" font-weight="700" fill="#64748b" id="m4Env1Stat">대기</text>
+
+            <rect x="0" y="55" width="345" height="44" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.8" id="m4Env2"/>
+            <text x="16" y="82" font-size="11.5" font-weight="700" fill="#0f172a">🏭 공장 생산라인 PC (Linux)</text>
+            <text x="330" y="82" text-anchor="end" font-size="11" font-weight="700" fill="#64748b" id="m4Env2Stat">대기</text>
+
+            <rect x="0" y="110" width="345" height="44" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.8" id="m4Env3"/>
+            <text x="16" y="137" font-size="11.5" font-weight="700" fill="#0f172a">☁️ 본사 클라우드 서버</text>
+            <text x="330" y="137" text-anchor="end" font-size="11" font-weight="700" fill="#64748b" id="m4Env3Stat">대기</text>
+          </g>
+        </svg>
+        <div id="m4DockerMsg" style="margin-top:10px; font-size:0.86rem; color:var(--text-secondary);">
+          위 두 버튼을 번갈아 눌러 <strong>환경 충돌 에러</strong>와 <strong>Docker 밀폐용기 패키징</strong>의 차이를 확인해 보세요.
+        </div>
+      </div>
+
+      <!-- 시각화 2: 실시간 API vs 배치 예측 토글 -->
+      <div class="sim-card">
+        <div class="sim-card-header">
+          <h3 class="sim-card-title">⚡ 시각화 2. 서빙 패턴 선택 (실시간 API vs 배치 예측)</h3>
+          <div class="segment-toggle">
+            <button class="segment-btn active" id="m4TabRealtime" type="button">⚡ 실시간 API (FastAPI)</button>
+            <button class="segment-btn" id="m4TabBatch" type="button">📅 배치 예측 (Batch)</button>
+          </div>
+        </div>
+
+        <!-- 실시간 API 패널 -->
+        <div id="m4RealtimePanel">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <div style="font-size:0.86rem; color:var(--text-secondary);">
+              <strong>현장 적용:</strong> 고속 컨베이어 벨트 이물·포장 불량 비전 검사 (<code style="background:var(--bg-subtle); padding:2px 6px; border-radius:4px;">POST /api/v1/predict</code>)
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span class="badge badge-blue" id="m4LatencyBadge">응답속도: 18 ms</span>
+              <button class="btn btn-coral btn-sm" id="m4InjectDefectBtn" type="button">🚨 이물 불량품 투입 테스트</button>
+            </div>
+          </div>
+          <div class="canvas-wrap" style="height:220px;">
+            <canvas id="m4ConveyorCanvas"></canvas>
+          </div>
+        </div>
+
+        <!-- 배치 예측 패널 -->
+        <div id="m4BatchPanel" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <div style="font-size:0.86rem; color:var(--text-secondary);">
+              <strong>현장 적용:</strong> 매일 오전 06:00 원료 성적서(COA) · 유통기한 안정성 일괄 예측 리포트 생성
+            </div>
+            <button class="btn btn-primary btn-sm" id="m4RunBatchBtn" type="button">▶ 오전 06:00 배치 작업 실행</button>
+          </div>
+
+          <div style="background:var(--bg-page); border:1px solid var(--border-light); border-radius:var(--radius-md); padding:16px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.84rem; font-weight:600; margin-bottom:6px;">
+              <span id="m4BatchStatusText">대기 중 (원료 COA 120건 대기)</span>
+              <span id="m4BatchPct">0%</span>
+            </div>
+            <div style="height:12px; background:var(--border-light); border-radius:999px; overflow:hidden;">
+              <div id="m4BatchBar" style="width:0%; height:100%; background:linear-gradient(90deg, #2563eb, #10b981); transition:width 0.15s linear;"></div>
+            </div>
+          </div>
+
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>원료 로트 ID</th>
+                  <th>품목명</th>
+                  <th>수분 / 산가</th>
+                  <th>예측 유통기한 안정성</th>
+                  <th>조치 권고</th>
+                </tr>
+              </thead>
+              <tbody id="m4BatchTableBody">
+                <tr><td colspan="5" style="text-align:center; color:var(--text-muted);">[오전 06:00 배치 작업 실행] 버튼을 누르면 일괄 예측 리포트가 생성됩니다.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 핵심 용어 툴팁 -->
+      <div class="glossary-box">
+        <p class="glossary-header">🔍 핵심 용어 툴팁</p>
+        <div class="glossary-chips" data-glossary="m4">
+          <button class="term-chip active" type="button" data-term="Docker (컨테이너)" data-desc="AI 코드와 실행에 필요한 파이썬·라이브러리를 하나의 표준 상자(이미지)에 담아 어떤 컴퓨터에서도 똑같이 실행되게 만드는 패키징 기술입니다.">Docker (컨테이너)</button>
+          <button class="term-chip" type="button" data-term="FastAPI (실시간 서빙)" data-desc="공장 카메라나 설비가 데이터를 보내면 밀리초(ms) 단위로 즉시 불량 여부를 응답해 주는 경량 웹 API 프레임워크입니다.">FastAPI (실시간 API)</button>
+          <button class="term-chip" type="button" data-term="배치 예측 (Batch Inference)" data-desc="실시간 응답이 필요 없는 업무(예: 일일 유통기한 예측, 주간 수요예측)를 정해진 시간에 대량으로 묶어 처리하는 경제적인 배포 방식입니다.">배치 예측 (Batch)</button>
+        </div>
+        <div class="term-detail-box" id="glossary-m4">
+          <strong>Docker (컨테이너):</strong> AI 코드와 실행에 필요한 파이썬·라이브러리를 하나의 표준 상자(이미지)에 담아 어떤 컴퓨터에서도 똑같이 실행되게 만드는 패키징 기술입니다.
+        </div>
+      </div>
+
+      <div class="module-footer-nav">
+        <button class="btn btn-outline" type="button" onclick="switchModule(3)">← 이전: Module 3</button>
+        <button class="btn btn-primary" type="button" onclick="switchModule(5)">다음: Module 5. 모니터링 · 드리프트 →</button>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         MODULE 5: 운영 모니터링 & 드리프트 경보 (Evidently · 재학습 루프)
+         ====================================================================== -->
+    <section class="module-panel" id="module-5">
+      <div class="module-header">
+        <span class="module-badge">Module 5 · 운영 감시와 자동 복구</span>
+        <h2 class="module-title">운영 모니터링 &amp; 드리프트 경보 (Evidently · 재학습 루프)</h2>
+        <p class="module-desc">계절 변화나 설비 노후화로 입력 데이터 분포가 밀려날 때(Data Drift), 이를 지표로 감지하고 자동 재학습을 가동하는 과정을 체험합니다.</p>
+      </div>
+
+      <div class="analogy-card">
+        <div class="analogy-icon">📡</div>
+        <div>
+          <p class="analogy-title">1분 현장 비유 — HACCP CCP 관리한계 이탈 경보 &amp; 자동 개선조치</p>
+          <p class="analogy-text">
+            여름철 원유·원물 수분이 올라가면 과거 겨울 데이터로 학습한 AI는 판단이 흐려집니다.
+            <strong>Evidently</strong>가 입력 분포 변화(<strong>PSI / KS</strong>)를 실시간 감시하다 한계치(0.20)를 넘으면 즉시 경보를 울리고, 최신 데이터로 모델을 자동 재학습해 교체합니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="sim-card">
+        <div class="sim-card-header">
+          <h3 class="sim-card-title">📈 Data Drift 분포 변화 &amp; 자동 재학습 시뮬레이터</h3>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" type="button" onclick="m5Preset(0, 0)">평상시 (정상)</button>
+            <button class="btn btn-amber btn-sm" type="button" onclick="m5Preset(55, 15)">장마철 수분 상승</button>
+            <button class="btn btn-coral btn-sm" type="button" onclick="m5Preset(75, 65)">계절+센서 복합 드리프트</button>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:16px;">
+          <div style="background:var(--bg-page); border:1px solid var(--border-light); border-radius:var(--radius-md); padding:14px;">
+            <div class="control-group">
+              <div class="control-label">
+                <span>☀️ 계절 변화 (여름철 원유/원물 수분 상승)</span>
+                <span id="m5SeasonVal" style="color:var(--blue-dark);">0%</span>
+              </div>
+              <input type="range" id="m5SeasonSlider" min="0" max="100" value="0" />
+            </div>
+            <div class="control-group" style="margin-bottom:0;">
+              <div class="control-label">
+                <span>🔧 설비 센서 노후화 (측정 분산 확대)</span>
+                <span id="m5SensorVal" style="color:var(--blue-dark);">0%</span>
+              </div>
+              <input type="range" id="m5SensorSlider" min="0" max="100" value="0" />
+            </div>
+          </div>
+
+          <div class="kpi-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom:0;">
+            <div class="kpi-box">
+              <div class="kpi-label">PSI (분포 안정성 지표)</div>
+              <div class="kpi-val" id="m5PsiVal" style="color:var(--emerald-dark);">0.01</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-label">KS 통계량 (최대 분포차)</div>
+              <div class="kpi-val" id="m5KsVal" style="color:var(--emerald-dark);">0.03</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-label">현재 모니터링 상태</div>
+              <div id="m5StatusBadge" style="margin-top:4px;"><span class="badge badge-emerald">정상 (Stable)</span></div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-label">모델 버전</div>
+              <div class="kpi-val" id="m5ModelVer" style="font-size:1.15rem; color:var(--blue-dark);">v1.0 (기준)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 분포 비교 캔버스 -->
+        <div class="canvas-wrap" style="height:250px;">
+          <canvas id="m5DriftCanvas"></canvas>
+        </div>
+
+        <!-- 자동 재학습 파이프라인 상태 -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:16px;">
+          <strong style="font-size:0.9rem;">🔄 자동 재학습 파이프라인 (임계치 PSI ≥ 0.20 초과 시 자동 가동)</strong>
+          <button class="btn btn-primary btn-sm" id="m5ManualRetrainBtn" type="button">⚙️ 수동 재학습 즉시 실행</button>
+        </div>
+
+        <div class="retrain-steps">
+          <div class="retrain-node" id="m5Step1">1. 🚨 드리프트 경보<br/><span style="font-weight:400; font-size:0.75rem;">Evidently 감지</span></div>
+          <div class="retrain-node" id="m5Step2">2. 📥 최신 데이터 수집<br/><span style="font-weight:400; font-size:0.75rem;">스키마 검증 통과</span></div>
+          <div class="retrain-node" id="m5Step3">3. ⚙️ 자동 재학습<br/><span style="font-weight:400; font-size:0.75rem;">신규 후보 모델 생성</span></div>
+          <div class="retrain-node" id="m5Step4">4. ✅ 모델 교체 완료<br/><span style="font-weight:400; font-size:0.75rem;">기준 분포 재정렬</span></div>
+        </div>
+      </div>
+
+      <!-- 핵심 용어 툴팁 -->
+      <div class="glossary-box">
+        <p class="glossary-header">🔍 핵심 용어 툴팁</p>
+        <div class="glossary-chips" data-glossary="m5">
+          <button class="term-chip active" type="button" data-term="데이터 드리프트 (Data Drift)" data-desc="학습할 때의 원료·공정 데이터 분포와 현재 공장에서 실시간으로 들어오는 데이터 분포가 달라지는 현상입니다.">Data Drift</button>
+          <button class="term-chip" type="button" data-term="PSI (Population Stability Index)" data-desc="기준 분포와 현재 분포의 차이를 숫자로 나타낸 지표입니다. 보통 0.1 미만은 정상, 0.1~0.2는 주의, 0.2 이상이면 재학습이 필요한 심각한 드리프트로 봅니다.">PSI 지표</button>
+          <button class="term-chip" type="button" data-term="Evidently AI" data-desc="머신러닝 모델의 데이터 드리프트와 성능 저하를 시각적 리포트와 경보로 모니터링해 주는 대표 오픈소스 도구입니다.">Evidently</button>
+        </div>
+        <div class="term-detail-box" id="glossary-m5">
+          <strong>데이터 드리프트 (Data Drift):</strong> 학습할 때의 원료·공정 데이터 분포와 현재 공장에서 실시간으로 들어오는 데이터 분포가 달라지는 현상입니다.
+        </div>
+      </div>
+
+      <div class="module-footer-nav">
+        <button class="btn btn-outline" type="button" onclick="switchModule(4)">← 이전: Module 4</button>
+        <button class="btn btn-primary" type="button" onclick="switchModule(6)">다음: Module 6. 실무 설계기 · 퀴즈 →</button>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         MODULE 6: 식품산업 실무 적용 설계기 & 이해도 확인 퀴즈 5문항
+         ====================================================================== -->
+    <section class="module-panel" id="module-6">
+      <div class="module-header">
+        <span class="module-badge">Module 6 · 현장 도입 로드맵 &amp; 최종 점검</span>
+        <h2 class="module-title">식품산업 실무 적용 설계기 &amp; 확인 퀴즈</h2>
+        <p class="module-desc">우리 공장·연구소의 현재 수준에 맞는 단계별 MLOps 도입 로드맵을 자동 생성하고, 현장 사례 퀴즈 5문항으로 핵심을 정리합니다.</p>
+      </div>
+
+      <div class="analogy-card">
+        <div class="analogy-icon">🗺️</div>
+        <div>
+          <p class="analogy-title">1분 현장 비유 — 스마트공장도 '기초 위생(선행요건) → HACCP → 자동화' 순서로!</p>
+          <p class="analogy-text">
+            종이 일지를 쓰는 현장에 곧바로 복잡한 클라우드 AI를 올리면 실패합니다.
+            <strong>1단계(데이터 표준화·검증) → 2단계(실험추적) → 3단계(자동배포·모니터링)</strong>로 우리 현장 수준에 맞춰 한 걸음씩 도입하는 것이 성공의 비결입니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- Part A: 내 현장 적용 체크리스트 생성기 -->
+      <div class="sim-card">
+        <div class="sim-card-header">
+          <h3 class="sim-card-title">🧭 내 현장 맞춤형 MLOps 도입 로드맵 생성기</h3>
+          <button class="btn btn-outline btn-sm" id="m6CopyRoadmapBtn" type="button">📋 로드맵 텍스트 복사</button>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:18px;">
+          <div>
+            <div style="font-size:0.86rem; font-weight:700; margin-bottom:8px;">① 관심 적용 분야 선택</div>
+            <div class="select-grid" id="m6DomainChoices">
+              <button class="choice-card selected" type="button" data-val="haccp">
+                <strong>🌡️ HACCP CCP 이탈 예측</strong>
+                <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">살균온도·가열시간 사전 경보</div>
+              </button>
+              <button class="choice-card" type="button" data-val="vision">
+                <strong>📷 비전 이물/포장 불량 검사</strong>
+                <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">컨베이어 실시간 불량 선별</div>
+              </button>
+              <button class="choice-card" type="button" data-val="recipe">
+                <strong>🥣 원료/배합 품질 예측</strong>
+                <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">COA 기반 물성·유통기한 예측</div>
+              </button>
+              <button class="choice-card" type="button" data-val="pdm">
+                <strong>⚙️ 설비 예지보전 (PdM)</strong>
+                <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">진동·전류 기반 고장 사전 감지</div>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:0.86rem; font-weight:700; margin-bottom:8px;">② 현재 우리 현장 데이터 수준</div>
+            <div style="display:grid; gap:10px;" id="m6LevelChoices">
+              <button class="choice-card selected" type="button" data-val="excel">
+                <strong>📄 종이 일지 / 엑셀 수기 관리</strong>
+                <div style="font-size:0.78rem; color:var(--text-muted);">작업자가 수기로 기록하거나 엑셀 파일로 취합</div>
+              </button>
+              <button class="choice-card" type="button" data-val="mes">
+                <strong>🗄️ MES / ERP DB 구축됨</strong>
+                <div style="font-size:0.78rem; color:var(--text-muted);">로트별 생산·품질 데이터가 사내 DB에 저장됨</div>
+              </button>
+              <button class="choice-card" type="button" data-val="iot">
+                <strong>📡 실시간 IoT / PLC 센서 연동</strong>
+                <div style="font-size:0.78rem; color:var(--text-muted);">초/분 단위 공정 데이터가 자동 수집됨</div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 맞춤형 출력 결과 -->
+        <div class="grid-3" id="m6RoadmapOutput"></div>
+        <div id="m6CautionBox" style="margin-top:14px; padding:14px 16px; border-radius:var(--radius-md); background:var(--amber-bg); border:1px solid var(--amber-border); color:var(--amber-dark); font-size:0.86rem;"></div>
+      </div>
+
+      <!-- Part B: 이해도 확인 퀴즈 5문항 -->
+      <div class="sim-card">
+        <div class="sim-card-header">
+          <h3 class="sim-card-title">✅ 식품 현장 사례 기반 이해도 확인 퀴즈 (5문항)</h3>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span class="badge badge-blue" id="m6QuizScoreBadge">점수: 0 / 5</span>
+            <button class="btn btn-outline btn-sm" id="m6ResetQuizBtn" type="button">↺ 다시 풀기</button>
+          </div>
+        </div>
+        <div id="m6QuizContainer"></div>
+      </div>
+
+      <!-- 핵심 용어 툴팁 -->
+      <div class="glossary-box">
+        <p class="glossary-header">🔍 핵심 용어 툴팁</p>
+        <div class="glossary-chips" data-glossary="m6">
+          <button class="term-chip active" type="button" data-term="PoC (Proof of Concept)" data-desc="전 공장 도입 전, 1개 핵심 라인이나 품목에 소규모로 MLOps를 시범 적용해 실효성을 검증하는 단계입니다.">PoC (시범 적용)</button>
+          <button class="term-chip" type="button" data-term="Shadow Deployment (그림자 배포)" data-desc="새 AI 모델을 실제 라인 제어에 바로 연결하지 않고, 기존 작업자 판정과 나란히 예측값만 기록하며 안전성을 검증하는 배포 전략입니다.">그림자 배포 (Shadow)</button>
+          <button class="term-chip" type="button" data-term="Human-in-the-Loop (HITL)" data-desc="AI가 애매하게 판정한 식품 불량 의심 건은 최종적으로 품질관리자(QA)가 검수하고, 그 결과를 다시 AI 학습에 반영하는 협업 구조입니다.">Human-in-the-Loop</button>
+        </div>
+        <div class="term-detail-box" id="glossary-m6">
+          <strong>PoC (Proof of Concept):</strong> 전 공장 도입 전, 1개 핵심 라인이나 품목에 소규모로 MLOps를 시범 적용해 실효성을 검증하는 단계입니다.
+        </div>
+      </div>
+
+      <div class="module-footer-nav">
+        <button class="btn btn-outline" type="button" onclick="switchModule(5)">← 이전: Module 5</button>
+        <button class="btn btn-emerald" type="button" onclick="openDrawer()">📚 심화 학습 자료 6선 열어보기</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       하단 푸터 (가상 데이터 명시 + 서랍 열기 버튼)
+       ======================================================================== -->
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <div>
+        ※ 본 웹앱의 시뮬레이션에 사용된 살균 온도, pH, 수분 함량, 미생물 검사값 및 센서 수치는 <strong>교육용 가상 예시</strong>입니다.
+      </div>
+      <button class="btn btn-outline btn-sm" type="button" onclick="openDrawer()">📚 심화 학습 자료 6선</button>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       우측 참고 학습 자료 서랍 (Drawer)
+       ======================================================================== -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+  <aside class="resource-drawer" id="resourceDrawer" aria-label="심화 학습 자료 6선">
+    <div class="drawer-header">
+      <div>
+        <h3 style="margin:0; font-size:1.05rem;">📚 심화 학습 자료 6선</h3>
+        <p style="margin:2px 0 0; font-size:0.78rem; color:var(--text-muted);">입문부터 제조 현장 실전 파이프라인까지 검증된 무료 자료</p>
+      </div>
+      <button class="btn btn-outline btn-sm" type="button" onclick="closeDrawer()" aria-label="서랍 닫기">✕ 닫기</button>
+    </div>
+    <div class="drawer-body">
+      <a class="resource-card" href="https://hololee.github.io/posts/MLOps-Basics/" target="_blank" rel="noopener noreferrer">
+        <span class="badge badge-emerald">1단계 · 한국어 입문</span>
+        <h4>MLOps-Basics (한국어 해설 0~9주) ↗</h4>
+        <p>모델 추적, 데이터 버전관리(DVC), 컨테이너, 배포까지 0~9주 커리큘럼을 한국어로 친절하게 해설한 입문 가이드.</p>
+      </a>
+
+      <a class="resource-card" href="https://pseudo-lab.github.io/mlops-docs/index.html" target="_blank" rel="noopener noreferrer">
+        <span class="badge badge-emerald">2단계 · 개념 정리</span>
+        <h4>정리하며 배우는 MLOps (가짜연구소) ↗</h4>
+        <p>비전공자·실무자도 이해하기 쉽게 MLOps 핵심 구성요소와 아키텍처를 체계적으로 정리한 한국어 문서.</p>
+      </a>
+
+      <a class="resource-card" href="https://www.opsware.co/blog/learn-mlops/" target="_blank" rel="noopener noreferrer">
+        <span class="badge badge-blue">3단계 · 전체 로드맵</span>
+        <h4>Learn MLOps 9단계 로드맵 (Opsware) ↗</h4>
+        <p>기초부터 실무 운영까지 어떤 순서로 도구를 학습해야 하는지 한눈에 보여주는 9단계 학습 지도.</p>
+      </a>
+
+      <a class="resource-card" href="https://github.com/DataTalksClub/mlops-zoomcamp/" target="_blank" rel="noopener noreferrer">
+        <span class="badge badge-blue">4단계 · 무료 9주 실습</span>
+        <h4>DataTalksClub MLOps Zoomcamp ↗</h4>
+        <p>전 세계에서 가장 유명한 무료 9주 실습 코스. MLflow, 오케스트레이션, 모니터링, 베스트 프랙티스를 직접 구현.</p>
+      </a>
+
+      <a class="resource-card" href="https://github.com/GokuMohandas/Made-With-ML/" target="_blank" rel="noopener noreferrer">
+        <span class="badge badge-amber">5단계 · 프로덕션 설계</span>
+        <h4>Made With ML (프로덕션 ML 설계 정석) ↗</h4>
+        <p>연구실 코드를 실제 서비스·공장 운영 수준으로 끌어올리는 소프트웨어 공학 및 MLOps 설계 정석 가이드.</p>
+      </a>
+
+      <a class="resource-card" href="https://github.com/manishsaini15/mlops-predictive-maintenance" target="_blank" rel="noopener noreferrer">
+        <span class="badge badge-coral">6단계 · 제조 QC 실전 예제</span>
+        <h4>제조 현장 QC·예지보전 MLOps 파이프라인 ↗</h4>
+        <p>Pandera(검증) + MLflow(추적) + Evidently(드리프트) + SHAP(설명가능성)을 모두 통합한 제조 현장 실전 코드.</p>
+      </a>
+    </div>
+  </aside>
+
+  <!-- 인앱 토스트 알림 -->
+  <div class="toast-box" id="toastBox" role="status" aria-live="polite"></div>
+
+  <!-- ========================================================================
+       JavaScript 인터랙티브 모션 시뮬레이터 로직
+       ======================================================================== -->
+  <script>
+    /* ========================================================================
+       공통 유틸리티: 토스트, 서랍, 탭 전환, 툴팁, 반응형 캔버스 DPR 헬퍼
+       ======================================================================== */
+    let toastTimer = null;
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      box.textContent = msg;
+      box.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => box.classList.remove('show'), 2800);
+    }
+
+    function openDrawer() {
+      document.getElementById('drawerBackdrop').classList.add('open');
+      document.getElementById('resourceDrawer').classList.add('open');
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawerBackdrop').classList.remove('open');
+      document.getElementById('resourceDrawer').classList.remove('open');
+    }
+
+    let currentModule = 1;
+    function switchModule(num) {
+      currentModule = num;
+      document.querySelectorAll('.module-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(`module-${num}`).classList.add('active');
+
+      document.querySelectorAll('.step-btn').forEach(btn => {
+        btn.classList.toggle('active', Number(btn.dataset.module) === num);
+      });
+      document.getElementById('progressPill').textContent = `Module ${num} / 6`;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // 활성화된 모듈의 캔버스 크기 재계산 및 리드로우
+      setTimeout(() => {
+        if (num === 1) m1DrawChart();
+        if (num === 4) m4ResizeConveyor();
+        if (num === 5) m5DrawDrift();
+      }, 60);
+    }
+
+    document.querySelectorAll('.step-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchModule(Number(btn.dataset.module)));
+    });
+    document.getElementById('openDrawerBtn').addEventListener('click', openDrawer);
+
+    // 핵심 용어 툴팁 이벤트 위임
+    document.querySelectorAll('.glossary-chips').forEach(group => {
+      const targetId = `glossary-${group.dataset.glossary}`;
+      const detailBox = document.getElementById(targetId);
+      group.querySelectorAll('.term-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          group.querySelectorAll('.term-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          detailBox.innerHTML = `<strong>${chip.dataset.term}:</strong> ${chip.dataset.desc}`;
+        });
+      });
+    });
+
+    // 고해상도(Retina/DPR) 캔버스 크기 설정 헬퍼
+    function setupHiDPICanvas(canvas) {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return null;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx, w: rect.width, h: rect.height };
+    }
+
+    /* ========================================================================
+       MODULE 1: 30일 공장 투입 시뮬레이션 (ML vs MLOps)
+       ======================================================================== */
+    let m1Day = 0;
+    let m1Timer = null;
+    const m1Data = {
+      mlAcc: [96.0],
+      mlopsAcc: [96.0],
+      mlFp: [2.0],
+      mlopsFp: [2.0]
+    };
+
+    // 30일 시나리오 데이터 사전 생성 (교육용 가상 수치)
+    const m1Scenario = Array.from({ length: 31 }, (_, d) => {
+      let mlA = 96.0;
+      let mlF = 2.0;
+      if (d > 5) { mlA -= (d - 5) * 0.45; mlF += (d - 5) * 0.25; }
+      if (d >= 8) { mlA -= Math.min(6, (d - 7) * 0.6); mlF += Math.min(5, (d - 7) * 0.4); }
+      if (d >= 17) { mlA -= Math.min(9, (d - 16) * 0.85); mlF += Math.min(7, (d - 16) * 0.55); }
+      if (d >= 24) { mlA -= Math.min(7, (d - 23) * 0.9); mlF += Math.min(6, (d - 23) * 0.6); }
+      mlA = Math.max(66.5, Number((mlA + Math.sin(d) * 0.4).toFixed(1)));
+      mlF = Math.min(22.4, Number((mlF + Math.cos(d) * 0.2).toFixed(1)));
+
+      // MLOps는 이벤트 직후 소폭 하락했다가 자동 재학습으로 94~96% 회복
+      let opsA = 95.6 + Math.sin(d * 0.7) * 0.5;
+      let opsF = 2.1 + Math.cos(d * 0.6) * 0.25;
+      if (d === 9 || d === 18 || d === 25) { opsA -= 1.8; opsF += 1.1; }
+      if (d === 10 || d === 19 || d === 26) { opsA += 0.3; opsF -= 0.2; }
+      opsA = Number(opsA.toFixed(1));
+      opsF = Number(Math.max(1.5, opsF).toFixed(1));
+
+      return { mlA, mlF, opsA, opsF };
+    });
+
+    function m1UpdateUI() {
+      const cur = m1Scenario[m1Day];
+      document.getElementById('m1DayVal').textContent = `Day ${m1Day} / 30`;
+      document.getElementById('m1MlAccVal').textContent = `${cur.mlA.toFixed(1)}%`;
+      document.getElementById('m1MlopsAccVal').textContent = `${cur.opsA.toFixed(1)}%`;
+      document.getElementById('m1FpVal').textContent = `${cur.mlF.toFixed(1)}% vs ${cur.opsF.toFixed(1)}%`;
+
+      const mlStatus = document.getElementById('m1MlStatus');
+      const mlEvent = document.getElementById('m1MlEventText');
+      const mlBox = document.getElementById('m1MlFactoryBox');
+      const banner = document.getElementById('m1EventBanner');
+
+      if (m1Day === 0) {
+        mlStatus.className = 'badge badge-amber';
+        mlStatus.textContent = '대기 중 (지난달 96%)';
+        mlEvent.textContent = '재학습·감시 체계 없음';
+        mlBox.setAttribute('stroke', '#f59e0b');
+        banner.innerHTML = '💡 <strong>[공장에 1개월 투입 시뮬레이션]</strong> 버튼을 눌러 하절기 원물 수분 변화(Day 8), 신규 공급사 로트(Day 17), 센서 노후화(Day 24) 발생 시 두 시스템의 차이를 확인하세요.';
+      } else if (m1Day < 8) {
+        mlStatus.className = 'badge badge-emerald';
+        mlStatus.textContent = '초기 안정 (94~96%)';
+        mlEvent.textContent = '초기에는 둘 다 정상';
+        banner.innerHTML = `📅 <strong>Day ${m1Day}:</strong> 초기 1주차는 학습 데이터와 공장 환경이 비슷해 노트북 모델과 MLOps 모두 높은 정확도를 보입니다.`;
+      } else if (m1Day < 17) {
+        mlStatus.className = 'badge badge-amber';
+        mlStatus.textContent = `성능 하락 중 (${cur.mlA}%)`;
+        mlEvent.textContent = '하절기 원물 수분 변화!';
+        mlBox.setAttribute('stroke', '#f59e0b');
+        banner.innerHTML = `☀️ <strong>Day ${m1Day} (하절기 원물 수분 상승):</strong> 노트북 ML은 탐지율이 떨어지고 오경보가 늘어나지만, MLOps는 Day 10에 자동 재학습으로 즉시 성능을 복구합니다.`;
+      } else if (m1Day < 24) {
+        mlStatus.className = 'badge badge-coral';
+        mlStatus.textContent = `불량 미탐 위험 (${cur.mlA}%)`;
+        mlEvent.textContent = '신규 공급사 원료 로트!';
+        mlBox.setAttribute('stroke', '#f43f5e');
+        banner.innerHTML = `🚚 <strong>Day ${m1Day} (신규 공급사 원료 입고):</strong> 원물 특성이 바뀌면서 노트북 ML의 오경보율이 ${cur.mlF}%까지 급등했습니다. MLOps는 95%대 성능을 유지합니다.`;
+      } else {
+        mlStatus.className = 'badge badge-coral';
+        mlStatus.textContent = `운영 불가 수준 (${cur.mlA}%)`;
+        mlEvent.textContent = '센서 노후화 + 누적 드리프트';
+        mlBox.setAttribute('stroke', '#f43f5e');
+        banner.innerHTML = `🚨 <strong>Day ${m1Day} (센서 노후화 누적):</strong> 1개월 만에 노트북 ML은 탐지율 ${cur.mlA}%·오경보 ${cur.mlF}%로 추락한 반면, MLOps는 탐지율 ${cur.opsA}%·오경보 ${cur.opsF}%로 안정 운영 중입니다.`;
+      }
+      m1DrawChart();
+    }
+
+    function m1DrawChart() {
+      const canvas = document.getElementById('m1ChartCanvas');
+      const info = setupHiDPICanvas(canvas);
+      if (!info) return;
+      const { ctx, w, h } = info;
+
+      ctx.clearRect(0, 0, w, h);
+      const pad = { top: 34, right: 24, bottom: 38, left: 48 };
+      const cw = w - pad.left - pad.right;
+      const ch = h - pad.top - pad.bottom;
+
+      // 배경 그리드 (60% ~ 100%)
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+      ctx.font = '11px sans-serif';
+      ctx.fillStyle = '#64748b';
+      for (let v = 60; v <= 100; v += 10) {
+        const y = pad.top + ch - ((v - 60) / 40) * ch;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(pad.left + cw, y);
+        ctx.stroke();
+        ctx.textAlign = 'right';
+        ctx.fillText(`${v}%`, pad.left - 8, y + 4);
+      }
+
+      // X축 눈금 (Day 0 ~ 30)
+      ctx.textAlign = 'center';
+      for (let d = 0; d <= 30; d += 5) {
+        const x = pad.left + (d / 30) * cw;
+        ctx.fillText(`D${d}`, x, h - 14);
+      }
+
+      // 주요 이벤트 수직 점선 (Day 8, 17, 24)
+      const events = [
+        { d: 8, label: '수분변화' },
+        { d: 17, label: '원료로트' },
+        { d: 24, label: '센서노후' }
+      ];
+      events.forEach(ev => {
+        const x = pad.left + (ev.d / 30) * cw;
+        ctx.save();
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(x, pad.top);
+        ctx.lineTo(x, pad.top + ch);
+        ctx.stroke();
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px sans-serif';
+        ctx.fillText(ev.label, x, pad.top - 8);
+        ctx.restore();
+      });
+
+      // MLOps 라인 (에메랄드/블루)
+      ctx.beginPath();
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 3;
+      for (let d = 0; d <= m1Day; d++) {
+        const x = pad.left + (d / 30) * cw;
+        const y = pad.top + ch - ((m1Scenario[d].opsA - 60) / 40) * ch;
+        if (d === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // 노트북 ML 라인 (코랄 레드)
+      ctx.beginPath();
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 3;
+      for (let d = 0; d <= m1Day; d++) {
+        const x = pad.left + (d / 30) * cw;
+        const y = pad.top + ch - ((m1Scenario[d].mlA - 60) / 40) * ch;
+        if (d === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // 현재 포인트 강조 점
+      const curX = pad.left + (m1Day / 30) * cw;
+      const curOpsY = pad.top + ch - ((m1Scenario[m1Day].opsA - 60) / 40) * ch;
+      const curMlY = pad.top + ch - ((m1Scenario[m1Day].mlA - 60) / 40) * ch;
+
+      ctx.fillStyle = '#10b981';
+      ctx.beginPath(); ctx.arc(curX, curOpsY, 5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#f43f5e';
+      ctx.beginPath(); ctx.arc(curX, curMlY, 5, 0, Math.PI * 2); ctx.fill();
+
+      // 범례
+      ctx.textAlign = 'left';
+      ctx.font = 'bold 11.5px sans-serif';
+      ctx.fillStyle = '#10b981';
+      ctx.fillText('● MLOps 자동 운영 (탐지율 유지)', pad.left + 8, pad.top + 16);
+      ctx.fillStyle = '#f43f5e';
+      ctx.fillText('● 노트북 수동 ML (성능 추락)', pad.left + 210, pad.top + 16);
+    }
+
+    document.getElementById('m1RunBtn').addEventListener('click', () => {
+      if (m1Timer) clearInterval(m1Timer);
+      if (m1Day >= 30) m1Day = 0;
+      showToast('공장 라인 30일 투입 시뮬레이션을 시작합니다.');
+      m1Timer = setInterval(() => {
+        m1Day++;
+        m1UpdateUI();
+        if (m1Day >= 30) {
+          clearInterval(m1Timer);
+          m1Timer = null;
+          showToast('30일 시뮬레이션 완료! 두 방식의 격차를 확인해 보세요.');
+        }
+      }, 150);
+    });
+
+    document.getElementById('m1ResetBtn').addEventListener('click', () => {
+      if (m1Timer) { clearInterval(m1Timer); m1Timer = null; }
+      m1Day = 0;
+      m1UpdateUI();
+    });
+
+    /* ========================================================================
+       MODULE 2: 데이터 검증 게이트웨이 (Pandera · DVC)
+       ======================================================================== */
+    let m2TempOverride = null; // -999°C 같은 극단값 표현용
+    let m2DvcCounter = 1;
+
+    function m2SyncDisplays() {
+      const temp = m2TempOverride !== null ? m2TempOverride : parseFloat(document.getElementById('m2TempSlider').value);
+      const ph = parseFloat(document.getElementById('m2PhSlider').value);
+      const moist = parseFloat(document.getElementById('m2MoistSlider').value);
+      const missing = document.getElementById('m2LabelMissing').checked;
+
+      document.getElementById('m2TempDisp').textContent = `${temp.toFixed(1)} °C`;
+      document.getElementById('m2PhDisp').textContent = ph.toFixed(1);
+      document.getElementById('m2MoistDisp').textContent = `${moist.toFixed(1)} %`;
+
+      const microBadge = document.getElementById('m2MicroDisp');
+      if (missing) {
+        microBadge.className = 'badge badge-coral';
+        microBadge.textContent = 'NULL (누락)';
+      } else {
+        microBadge.className = 'badge badge-emerald';
+        microBadge.textContent = '120 CFU/g';
+      }
+    }
+
+    function m2ApplyPreset(type) {
+      m2TempOverride = null;
+      if (type === 'normal') {
+        document.getElementById('m2TempSlider').value = 85;
+        document.getElementById('m2PhSlider').value = 6.4;
+        document.getElementById('m2MoistSlider').value = 68;
+        document.getElementById('m2LabelMissing').checked = false;
+      } else if (type === 'sensor') {
+        m2TempOverride = -999.0;
+        document.getElementById('m2TempSlider').value = -100;
+        document.getElementById('m2PhSlider').value = 6.4;
+        document.getElementById('m2MoistSlider').value = 68;
+        document.getElementById('m2LabelMissing').checked = false;
+      } else if (type === 'unit') {
+        // 85°C를 화씨 185°F로 잘못 입력한 시나리오
+        document.getElementById('m2TempSlider').value = 185;
+        document.getElementById('m2PhSlider').value = 6.4;
+        document.getElementById('m2MoistSlider').value = 68;
+        document.getElementById('m2LabelMissing').checked = false;
+      } else if (type === 'label') {
+        document.getElementById('m2TempSlider').value = 84;
+        document.getElementById('m2PhSlider').value = 6.2;
+        document.getElementById('m2MoistSlider').value = 65;
+        document.getElementById('m2LabelMissing').checked = true;
+      }
+      m2SyncDisplays();
+      m2RunValidation();
+    }
+
+    ['m2TempSlider', 'm2PhSlider', 'm2MoistSlider', 'm2LabelMissing'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        if (id === 'm2TempSlider') m2TempOverride = null;
+        m2SyncDisplays();
+      });
+    });
+
+    function m2RunValidation() {
+      const temp = m2TempOverride !== null ? m2TempOverride : parseFloat(document.getElementById('m2TempSlider').value);
+      const ph = parseFloat(document.getElementById('m2PhSlider').value);
+      const moist = parseFloat(document.getElementById('m2MoistSlider').value);
+      const missing = document.getElementById('m2LabelMissing').checked;
+
+      const errors = [];
+      if (temp === -999) {
+        errors.push(`살균온도 오류 (-999.0°C): 센서 단선/결측 오류코드 감지`);
+      } else if (temp > 130) {
+        errors.push(`살균온도 범위 초과 (${temp.toFixed(1)}°C): 화씨(°F) 단위 혼용 의심 (정상 기준 70~95°C)`);
+      } else if (temp < 70 || temp > 95) {
+        errors.push(`살균온도 이탈 (${temp.toFixed(1)}°C): 허용 범위 70~95°C 벗어남`);
+      }
+      if (ph < 4.0 || ph > 6.8) {
+        errors.push(`pH 범위 이탈 (${ph.toFixed(1)}): 식품 공정 허용 기준 4.0~6.8 벗어남`);
+      }
+      if (moist < 10 || moist > 85) {
+        errors.push(`수분함량 범위 이탈 (${moist.toFixed(1)}%): 허용 기준 10~85% 벗어남`);
+      }
+      if (missing) {
+        errors.push(`미생물 검사값(정답 라벨) 누락: 지도학습에 필수적인 타겟 값이 NULL입니다.`);
+      }
+
+      const passed = errors.length === 0;
+      const packet = document.getElementById('m2Packet');
+      const packetRect = document.getElementById('m2PacketRect');
+      const gateBox = document.getElementById('m2GateBox');
+      const gateLamp = document.getElementById('m2GateLamp');
+      const gateIcon = document.getElementById('m2GateIcon');
+      const report = document.getElementById('m2Report');
+
+      // 1단계: 패킷을 중앙 게이트로 이동
+      packet.style.transition = 'transform 0.45s ease';
+      packet.setAttribute('transform', 'translate(210, 82)');
+      packetRect.setAttribute('fill', '#2563eb');
+      gateLamp.setAttribute('fill', '#f59e0b');
+      gateIcon.textContent = '…';
+
+      setTimeout(() => {
+        if (passed) {
+          gateBox.setAttribute('stroke', '#10b981');
+          gateBox.setAttribute('fill', '#ecfdf5');
+          gateLamp.setAttribute('fill', '#10b981');
+          gateIcon.textContent = '✓';
+          packetRect.setAttribute('fill', '#10b981');
+          packet.setAttribute('transform', 'translate(362, 82)');
+
+          const ver = `dvc-v1.${m2DvcCounter++}`;
+          document.getElementById('m2DvcVer').textContent = `저장: ${ver}`;
+          report.className = 'gate-report pass';
+          report.innerHTML = `<strong>✅ 검증 통과 (Schema Check PASS)</strong><br/>모든 항목(온도 ${temp.toFixed(1)}°C, pH ${ph.toFixed(1)}, 수분 ${moist.toFixed(1)}%, 미생물 정상)이 기준에 부합하여 <strong>DVC 버전(${ver})</strong>으로 등록되고 학습 파이프라인으로 이동했습니다.`;
+          showToast(`정상 데이터 통과! DVC ${ver} 저장 완료`);
+        } else {
+          gateBox.setAttribute('stroke', '#f43f5e');
+          gateBox.setAttribute('fill', '#fff1f2');
+          gateLamp.setAttribute('fill', '#f43f5e');
+          gateIcon.textContent = '✕';
+          packetRect.setAttribute('fill', '#f43f5e');
+          packet.setAttribute('transform', 'translate(362, 146)');
+
+          report.className = 'gate-report fail';
+          report.innerHTML = `<strong>🚫 불량 데이터 자동 차단 (Schema Check FAIL)</strong><ul style="margin:6px 0 0; padding-left:18px;">${errors.map(e => `<li>${e}</li>`).join('')}</ul>`;
+          showToast('불량 데이터가 감지되어 학습 진입을 자동 차단했습니다!');
+        }
+      }, 480);
+    }
+
+    document.getElementById('m2RunGateBtn').addEventListener('click', m2RunValidation);
+
+    /* ========================================================================
+       MODULE 3: 실험 추적 & 모델 레지스트리 (MLflow)
+       ======================================================================== */
+    let m3RunCounter = 1;
+    let m3Runs = [
+      {
+        id: 'RUN-001',
+        algo: '로지스틱 회귀',
+        f1: 0.842,
+        speed: '4ms / 저비용',
+        params: '결측치 보간',
+        stage: 'Production'
+      }
+    ];
+    let m3PrevProdId = null;
+
+    function m3RenderTable() {
+      const tbody = document.getElementById('m3LogBody');
+      tbody.innerHTML = '';
+
+      const activeProd = m3Runs.find(r => r.stage === 'Production');
+      if (activeProd) {
+        document.getElementById('m3ActiveProdName').textContent = `${activeProd.id} · ${activeProd.algo} (F1: ${activeProd.f1.toFixed(3)})`;
+      }
+      document.getElementById('m3PrevProdInfo').textContent = m3PrevProdId ? `롤백 가능 버전: ${m3PrevProdId}` : '롤백 가능 버전: 없음';
+      document.getElementById('m3RollbackBtn').disabled = !m3PrevProdId;
+
+      m3Runs.forEach(run => {
+        const tr = document.createElement('tr');
+        if (run.stage === 'Production') tr.className = 'row-prod';
+
+        let stageBadge = `<span class="badge badge-slate">None</span>`;
+        if (run.stage === 'Staging') stageBadge = `<span class="badge badge-amber">Staging (시생산)</span>`;
+        if (run.stage === 'Production') stageBadge = `<span class="badge badge-emerald">Production (운영중)</span>`;
+        if (run.stage === 'Archived') stageBadge = `<span class="badge badge-slate">Archived (보관)</span>`;
+
+        tr.innerHTML = `
+          <td><strong>${run.id}</strong></td>
+          <td>${run.algo}</td>
+          <td><strong style="color:var(--blue-dark);">${run.f1.toFixed(3)}</strong></td>
+          <td>${run.speed}</td>
+          <td style="font-size:0.8rem; color:var(--text-secondary);">${run.params || '기본값'}</td>
+          <td>${stageBadge}</td>
+          <td style="white-space:nowrap;">
+            ${run.stage !== 'Staging' && run.stage !== 'Production' ? `<button class="btn btn-outline btn-sm" onclick="m3SetStage('${run.id}', 'Staging')">Staging 등록</button>` : ''}
+            ${run.stage !== 'Production' ? `<button class="btn btn-emerald btn-sm" onclick="m3SetStage('${run.id}', 'Production')">Production 승격</button>` : '<span style="font-size:0.78rem; color:var(--emerald-dark); font-weight:700;">● 공장 연결됨</span>'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function m3SetStage(runId, newStage) {
+      if (newStage === 'Production') {
+        const curProd = m3Runs.find(r => r.stage === 'Production');
+        if (curProd && curProd.id !== runId) {
+          m3PrevProdId = curProd.id;
+          curProd.stage = 'Archived';
+        }
+      }
+      const target = m3Runs.find(r => r.id === runId);
+      if (target) {
+        target.stage = newStage;
+        m3RenderTable();
+        showToast(newStage === 'Production'
+          ? `🚀 ${runId} 모델이 공장 라인(Production)으로 승격되었습니다!`
+          : `🧪 ${runId} 모델이 시생산(Staging)에 등록되었습니다.`);
+      }
+    }
+
+    document.getElementById('m3RunExpBtn').addEventListener('click', () => {
+      const algoKey = document.getElementById('m3AlgoSelect').value;
+      const preps = Array.from(document.querySelectorAll('.m3-prep:checked')).map(c => c.value);
+
+      const algoMap = {
+        logistic: { name: '로지스틱 회귀', base: 0.835, speed: '4ms / 저비용' },
+        rf: { name: '랜덤포레스트', base: 0.892, speed: '16ms / 중비용' },
+        xgb: { name: 'XGBoost', base: 0.928, speed: '22ms / 고성능' }
+      };
+      const cfg = algoMap[algoKey];
+      const prepBonus = preps.length * 0.011;
+      const jitter = (Math.random() - 0.3) * 0.014;
+      const f1 = Math.min(0.985, Math.max(0.78, cfg.base + prepBonus + jitter));
+
+      m3RunCounter++;
+      const newId = `RUN-${String(m3RunCounter).padStart(3, '0')}`;
+      m3Runs.unshift({
+        id: newId,
+        algo: cfg.name,
+        f1,
+        speed: cfg.speed,
+        params: preps.join(', ') || '전처리 없음',
+        stage: 'None'
+      });
+      m3RenderTable();
+      showToast(`실험 완료! ${newId} (F1: ${f1.toFixed(3)}) 기록됨`);
+    });
+
+    document.getElementById('m3RollbackBtn').addEventListener('click', () => {
+      if (!m3PrevProdId) return;
+      const curProd = m3Runs.find(r => r.stage === 'Production');
+      const prevProd = m3Runs.find(r => r.id === m3PrevProdId);
+      if (curProd && prevProd) {
+        curProd.stage = 'Archived';
+        prevProd.stage = 'Production';
+        const rolledBackTo = prevProd.id;
+        m3PrevProdId = curProd.id;
+        m3RenderTable();
+        showToast(`⏪ 긴급 롤백 완료! 공장 라인이 ${rolledBackTo} 모델로 안전하게 복구되었습니다.`);
+      }
+    });
+
+    /* ========================================================================
+       MODULE 4: Docker 패키징 & 실시간 API vs 배치 예측
+       ======================================================================== */
+    document.getElementById('m4DockerOffBtn').addEventListener('click', () => {
+      document.getElementById('m4SealFrame').setAttribute('opacity', '0');
+      document.getElementById('m4PkgTitle').textContent = '코드만 단순 복사 (비표준)';
+      document.getElementById('m4ArrowLabel').textContent = '환경 불일치!';
+
+      document.getElementById('m4Env1').setAttribute('stroke', '#10b981');
+      document.getElementById('m4Env1Stat').setAttribute('fill', '#047857');
+      document.getElementById('m4Env1Stat').textContent = '✓ 실행 성공';
+
+      document.getElementById('m4Env2').setAttribute('stroke', '#f43f5e');
+      document.getElementById('m4Env2Stat').setAttribute('fill', '#be123c');
+      document.getElementById('m4Env2Stat').textContent = '✕ Python 버전 충돌 에러!';
+
+      document.getElementById('m4Env3').setAttribute('stroke', '#f43f5e');
+      document.getElementById('m4Env3Stat').setAttribute('fill', '#be123c');
+      document.getElementById('m4Env3Stat').textContent = '✕ 라이브러리 누락 에러!';
+
+      document.getElementById('m4DockerMsg').innerHTML = '<strong style="color:var(--coral-dark);">⚠️ 문제 발생:</strong> 개발자 노트북에서는 잘 되지만, 공장 PC와 서버의 파이썬·라이브러리 버전이 달라 실행이 중단됩니다.';
+    });
+
+    document.getElementById('m4DockerOnBtn').addEventListener('click', () => {
+      document.getElementById('m4SealFrame').setAttribute('opacity', '1');
+      document.getElementById('m4PkgTitle').textContent = '📦 Docker 밀폐용기 패키징 완료';
+      document.getElementById('m4ArrowLabel').textContent = '동일 컨테이너 배포';
+
+      ['m4Env1', 'm4Env2', 'm4Env3'].forEach(id => {
+        document.getElementById(id).setAttribute('stroke', '#10b981');
+        const st = document.getElementById(id + 'Stat');
+        st.setAttribute('fill', '#047857');
+        st.textContent = '✓ 동일 환경 즉시 실행 (OK)';
+      });
+
+      document.getElementById('m4DockerMsg').innerHTML = '<strong style="color:var(--emerald-dark);">✅ 해결 완료:</strong> 코드+파이썬+라이브러리를 식품 밀폐용기(Docker 컨테이너)에 통째로 담아 노트북·공장 PC·클라우드 어디서든 100% 동일하게 실행됩니다.';
+      showToast('Docker 밀폐용기 패키징으로 3개 환경 모두 정상 배포되었습니다!');
+    });
+
+    // 서빙 패턴 토글
+    document.getElementById('m4TabRealtime').addEventListener('click', () => {
+      document.getElementById('m4TabRealtime').classList.add('active');
+      document.getElementById('m4TabBatch').classList.remove('active');
+      document.getElementById('m4RealtimePanel').style.display = 'block';
+      document.getElementById('m4BatchPanel').style.display = 'none';
+      setTimeout(m4ResizeConveyor, 40);
+    });
+
+    document.getElementById('m4TabBatch').addEventListener('click', () => {
+      document.getElementById('m4TabBatch').classList.add('active');
+      document.getElementById('m4TabRealtime').classList.remove('active');
+      document.getElementById('m4RealtimePanel').style.display = 'none';
+      document.getElementById('m4BatchPanel').style.display = 'block';
+    });
+
+    // 실시간 컨베이어 벨트 비전 검사 애니메이션
+    const m4Items = [];
+    let m4BeltOffset = 0;
+    let m4ScanFlash = 0;
+    let m4ScanIsDefect = false;
+
+    function m4SpawnItem(forceDefect = false) {
+      m4Items.push({
+        x: -40,
+        y: 122,
+        defect: forceDefect || Math.random() < 0.22,
+        scanned: false,
+        rejected: false
+      });
+    }
+
+    document.getElementById('m4InjectDefectBtn').addEventListener('click', () => {
+      m4SpawnItem(true);
+      showToast('이물 불량품이 컨베이어 벨트에 투입되었습니다!');
+    });
+
+    let m4CanvasInfo = null;
+    function m4ResizeConveyor() {
+      const canvas = document.getElementById('m4ConveyorCanvas');
+      m4CanvasInfo = setupHiDPICanvas(canvas);
+    }
+
+    let m4SpawnTick = 0;
+    function m4AnimateConveyor() {
+      requestAnimationFrame(m4AnimateConveyor);
+      if (currentModule !== 4) return;
+      if (document.getElementById('m4RealtimePanel').style.display === 'none') return;
+      if (!m4CanvasInfo) m4ResizeConveyor();
+      if (!m4CanvasInfo) return;
+
+      const { ctx, w, h } = m4CanvasInfo;
+      ctx.clearRect(0, 0, w, h);
+
+      m4BeltOffset = (m4BeltOffset + 2.2) % 28;
+      m4SpawnTick++;
+      if (m4SpawnTick % 85 === 0) m4SpawnItem(false);
+
+      const camX = w * 0.48;
+      const beltY = 144;
+
+      // 컨베이어 벨트
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(0, beltY, w, 26);
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2;
+      for (let x = -28 + m4BeltOffset; x < w; x += 28) {
+        ctx.beginPath();
+        ctx.moveTo(x, beltY + 3);
+        ctx.lineTo(x, beltY + 23);
+        ctx.stroke();
+      }
+
+      // 불량 배출 슈트 표시
+      ctx.fillStyle = '#fff1f2';
+      ctx.strokeStyle = '#fecdd3';
+      ctx.fillRect(camX + 45, beltY + 30, 120, 34);
+      ctx.strokeRect(camX + 45, beltY + 30, 120, 34);
+      ctx.fillStyle = '#be123c';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('불량 자동 배출함', camX + 105, beltY + 51);
+
+      // 비전 카메라 + FastAPI 박스
+      ctx.fillStyle = '#eff6ff';
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(camX - 58, 12, 116, 44, 10);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#1d4ed8';
+      ctx.font = 'bold 11.5px sans-serif';
+      ctx.fillText('📷 FastAPI 비전', camX, 31);
+      ctx.font = '10px sans-serif';
+      ctx.fillText('POST /predict', camX, 46);
+
+      // 스캔 레이저 빔
+      if (m4ScanFlash > 0) {
+        m4ScanFlash--;
+        ctx.fillStyle = m4ScanIsDefect ? 'rgba(244, 63, 94, 0.25)' : 'rgba(16, 185, 129, 0.22)';
+        ctx.beginPath();
+        ctx.moveTo(camX - 10, 56);
+        ctx.lineTo(camX + 10, 56);
+        ctx.lineTo(camX + 32, beltY);
+        ctx.lineTo(camX - 32, beltY);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // 식품 파우치/제품 이동
+      for (let i = m4Items.length - 1; i >= 0; i--) {
+        const it = m4Items[i];
+        it.x += 2.2;
+
+        // 카메라 통과 시 실시간 API 추론 시뮬레이션
+        if (!it.scanned && Math.abs(it.x - camX) < 4) {
+          it.scanned = true;
+          m4ScanFlash = 16;
+          m4ScanIsDefect = it.defect;
+          const ms = Math.floor(14 + Math.random() * 14);
+          document.getElementById('m4LatencyBadge').textContent = `응답속도: ${ms} ms (${it.defect ? '이물 감지!' : '정상'})`;
+        }
+
+        // 불량품이면 배출구로 이동
+        if (it.scanned && it.defect && it.x > camX + 55) {
+          it.rejected = true;
+          it.y += 3.2;
+        }
+
+        // 제품 그리기
+        ctx.fillStyle = it.scanned ? (it.defect ? '#f43f5e' : '#10b981') : '#94a3b8';
+        ctx.beginPath();
+        ctx.roundRect(it.x - 20, it.y - 20, 40, 38, 7);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(it.defect && it.scanned ? '불량' : (it.scanned ? '정상' : '식품'), it.x, it.y + 3);
+
+        // 이물 점 표시
+        if (it.defect) {
+          ctx.fillStyle = '#0f172a';
+          ctx.beginPath();
+          ctx.arc(it.x + 8, it.y - 8, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        if (it.x > w + 50 || it.y > h + 40) {
+          m4Items.splice(i, 1);
+        }
+      }
+    }
+
+    // 배치 예측 시뮬레이션
+    document.getElementById('m4RunBatchBtn').addEventListener('click', () => {
+      const bar = document.getElementById('m4BatchBar');
+      const pct = document.getElementById('m4BatchPct');
+      const status = document.getElementById('m4BatchStatusText');
+      const tbody = document.getElementById('m4BatchTableBody');
+
+      let p = 0;
+      bar.style.width = '0%';
+      status.textContent = '배치 엔진 가동 중... 원료 COA 120건 일괄 추론 중';
+
+      const timer = setInterval(() => {
+        p += 20;
+        bar.style.width = `${p}%`;
+        pct.textContent = `${p}%`;
+        if (p >= 100) {
+          clearInterval(timer);
+          status.textContent = '✅ 06:00 배치 완료 (총 120건 분석, 소요시간 4.2초)';
+          const rows = [
+            { lot: 'LOT-261125-A1', name: '탈지분유 (국내산)', spec: '수분 3.2% / 산가 0.12', pred: '안정 (98.4%)', badge: 'badge-emerald', act: '정상 투입 승인' },
+            { lot: 'LOT-261125-B4', name: '식물성 유지 (배합용)', spec: '수분 0.4% / 산가 0.58', pred: '주의 (산패 위험 24%)', badge: 'badge-amber', act: '선입선출 우선 사용' },
+            { lot: 'LOT-261125-C2', name: '프로바이오틱스 원말', spec: '수분 6.8% / 활성도 저하', pred: '위험 (유통기한 미달 우려)', badge: 'badge-coral', act: 'QA 정밀 재검 요청' },
+            { lot: 'LOT-261125-D9', name: '농축 사과과즙', spec: '수분 30.1% / 당도 70Bx', pred: '안정 (96.9%)', badge: 'badge-emerald', act: '정상 투입 승인' }
+          ];
+          tbody.innerHTML = rows.map(r => `
+            <tr>
+              <td><strong>${r.lot}</strong></td>
+              <td>${r.name}</td>
+              <td>${r.spec}</td>
+              <td><span class="badge ${r.badge}">${r.pred}</span></td>
+              <td>${r.act}</td>
+            </tr>
+          `).join('');
+          showToast('아침 06:00 원료 COA 일괄 배치 리포트가 생성되었습니다!');
+        }
+      }, 180);
+    });
+
+    /* ========================================================================
+       MODULE 5: 운영 모니터링 & 드리프트 경보 (Evidently · 자동 재학습)
+       ======================================================================== */
+    let m5RefMean = 0.0;
+    let m5RefStd = 1.0;
+    let m5Version = 1.0;
+    let m5IsRetraining = false;
+
+    function m5CalcMetrics() {
+      const season = parseFloat(document.getElementById('m5SeasonSlider').value);
+      const sensor = parseFloat(document.getElementById('m5SensorSlider').value);
+      document.getElementById('m5SeasonVal').textContent = `${season}%`;
+      document.getElementById('m5SensorVal').textContent = `${sensor}%`;
+
+      const curMean = (season / 100) * 1.9;
+      const curStd = 1.0 + (sensor / 100) * 0.65;
+
+      // 교육용 정규분포 기반 PSI & KS 근사 계산
+      const meanDiff = Math.abs(curMean - m5RefMean);
+      const stdDiff = Math.abs(curStd - m5RefStd);
+      const psi = Number((0.01 + meanDiff * meanDiff * 0.14 + stdDiff * 0.18).toFixed(2));
+      const ks = Number(Math.min(0.95, 0.03 + meanDiff * 0.26 + stdDiff * 0.16).toFixed(2));
+
+      return { curMean, curStd, psi, ks };
+    }
+
+    function m5DrawDrift() {
+      const canvas = document.getElementById('m5DriftCanvas');
+      const info = setupHiDPICanvas(canvas);
+      if (!info) return;
+      const { ctx, w, h } = info;
+      const { curMean, curStd, psi, ks } = m5CalcMetrics();
+
+      // KPI 업데이트
+      const psiEl = document.getElementById('m5PsiVal');
+      const ksEl = document.getElementById('m5KsVal');
+      const badgeEl = document.getElementById('m5StatusBadge');
+
+      psiEl.textContent = psi.toFixed(2);
+      ksEl.textContent = ks.toFixed(2);
+
+      if (psi < 0.10) {
+        psiEl.style.color = 'var(--emerald-dark)';
+        ksEl.style.color = 'var(--emerald-dark)';
+        badgeEl.innerHTML = '<span class="badge badge-emerald">정상 (Stable)</span>';
+      } else if (psi < 0.20) {
+        psiEl.style.color = 'var(--amber-dark)';
+        ksEl.style.color = 'var(--amber-dark)';
+        badgeEl.innerHTML = '<span class="badge badge-amber">주의 (Monitor)</span>';
+      } else {
+        psiEl.style.color = 'var(--coral-dark)';
+        ksEl.style.color = 'var(--coral-dark)';
+        badgeEl.innerHTML = '<span class="badge badge-coral">🚨 드리프트 경보 (PSI ≥ 0.20)</span>';
+        if (!m5IsRetraining) m5TriggerRetrain();
+      }
+
+      // 분포 곡선 그리기
+      ctx.clearRect(0, 0, w, h);
+      const pad = { top: 34, right: 20, bottom: 36, left: 20 };
+      const cw = w - pad.left - pad.right;
+      const ch = h - pad.top - pad.bottom;
+
+      const xMin = -3.5, xMax = 5.5;
+      const gaussian = (x, mu, sigma) => (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+
+      // 바닥 축
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, pad.top + ch);
+      ctx.lineTo(pad.left + cw, pad.top + ch);
+      ctx.stroke();
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('← 원료 수분·센서 특성값 분포 (낮음 ~ 높음) →', w / 2, h - 12);
+
+      function drawCurve(mu, sigma, strokeColor, fillColor) {
+        ctx.beginPath();
+        const steps = 120;
+        for (let i = 0; i <= steps; i++) {
+          const xVal = xMin + (i / steps) * (xMax - xMin);
+          const yVal = gaussian(xVal, mu, sigma);
+          const px = pad.left + (i / steps) * cw;
+          const py = pad.top + ch - (yVal / 0.45) * ch;
+          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.lineTo(pad.left + cw, pad.top + ch);
+        ctx.lineTo(pad.left, pad.top + ch);
+        ctx.closePath();
+        ctx.fillStyle = fillColor;
+        ctx.fill();
+      }
+
+      drawCurve(m5RefMean, m5RefStd, '#2563eb', 'rgba(37, 99, 235, 0.16)');
+      drawCurve(curMean, curStd, '#f59e0b', 'rgba(245, 158, 11, 0.22)');
+
+      // 범례
+      ctx.textAlign = 'left';
+      ctx.font = 'bold 11.5px sans-serif';
+      ctx.fillStyle = '#2563eb';
+      ctx.fillText('● 기준 학습 분포 (Reference)', pad.left + 8, 22);
+      ctx.fillStyle = '#d97706';
+      ctx.fillText('● 현재 공장 입력 분포 (Current)', pad.left + 195, 22);
+    }
+
+    function m5ResetStepClasses() {
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`m5Step${i}`).className = 'retrain-node';
+      }
+    }
+
+    function m5TriggerRetrain() {
+      if (m5IsRetraining) return;
+      m5IsRetraining = true;
+      m5ResetStepClasses();
+
+      const s1 = document.getElementById('m5Step1');
+      const s2 = document.getElementById('m5Step2');
+      const s3 = document.getElementById('m5Step3');
+      const s4 = document.getElementById('m5Step4');
+
+      s1.className = 'retrain-node alert';
+      showToast('🚨 PSI 임계치 초과! 자동 재학습 파이프라인을 가동합니다.');
+
+      setTimeout(() => { s1.className = 'retrain-node done'; s2.className = 'retrain-node active'; }, 800);
+      setTimeout(() => { s2.className = 'retrain-node done'; s3.className = 'retrain-node active'; }, 1600);
+      setTimeout(() => {
+        s3.className = 'retrain-node done';
+        s4.className = 'retrain-node done';
+
+        // 신규 모델 교체: 기준 분포를 현재 계절 환경으로 재정렬
+        const { curMean, curStd } = m5CalcMetrics();
+        m5RefMean = curMean;
+        m5RefStd = curStd;
+        m5Version = Number((m5Version + 0.1).toFixed(1));
+        document.getElementById('m5ModelVer').textContent = `v${m5Version.toFixed(1)} (재학습됨)`;
+        m5IsRetraining = false;
+        m5DrawDrift();
+        showToast(`✅ 신규 모델 v${m5Version.toFixed(1)} 교체 완료! 드리프트 지표가 정상화되었습니다.`);
+      }, 2500);
+    }
+
+    function m5Preset(season, sensor) {
+      m5RefMean = 0.0;
+      m5RefStd = 1.0;
+      m5ResetStepClasses();
+      document.getElementById('m5SeasonSlider').value = season;
+      document.getElementById('m5SensorSlider').value = sensor;
+      m5DrawDrift();
+    }
+
+    document.getElementById('m5SeasonSlider').addEventListener('input', m5DrawDrift);
+    document.getElementById('m5SensorSlider').addEventListener('input', m5DrawDrift);
+    document.getElementById('m5ManualRetrainBtn').addEventListener('click', m5TriggerRetrain);
+
+    /* ========================================================================
+       MODULE 6: 실무 적용 로드맵 생성기 & 퀴즈 5문항
+       ======================================================================== */
+    let m6Domain = 'haccp';
+    let m6Level = 'excel';
+    let m6LastRoadmapText = '';
+
+    const m6DomainInfo = {
+      haccp: {
+        name: 'HACCP CCP 이탈 예측',
+        s2: '살균온도·가열시간·유량 이력을 기반으로 MLflow에서 조기 경보 모델(XGBoost/RF) 비교 실험',
+        s3: '실시간 경보 API(FastAPI) 구축 + 계절별 원물 온도 변화 드리프트(PSI) 감시',
+        caution: '법적 CCP 관리한계(CL) 자체를 AI가 대체할 수 없으므로, AI는 "이탈 15분 전 사전 조기경보" 보조 수단으로 설계해야 합니다.'
+      },
+      vision: {
+        name: '비전 이물/포장 불량 검사',
+        s2: '정상/불량 이미지 데이터셋 DVC 버전 관리 + 오탐(과검)과 미탐(유출) 균형 F1-Score 추적',
+        s3: '엣지 PC에 Docker 컨테이너 + 고속 실시간 추론 배포 + 조명/포장지 디자인 변경 시 드리프트 경보',
+        caution: '초기에는 실제 불량 배출기에 바로 연결하지 말고 "그림자 배포(Shadow)"로 작업자 판정과 2주 이상 교차 검증하세요.'
+      },
+      recipe: {
+        name: '원료/배합 품질 예측',
+        s2: '원료 COA(수분·단백질·산가)와 최종 관능/물성 점수를 매칭해 MLflow 실험 추적 체계화',
+        s3: '매일 아침 입고 원료 기반 일괄 배치(Batch) 예측 리포트 자동 발행 + 신규 공급사 유입 시 재학습',
+        caution: '엑셀 배합표의 단위 혼용(g/kg, %/ppm)이 가장 흔한 오류이므로 Pandera 스키마 검증 게이트를 최우선 적용하세요.'
+      },
+      pdm: {
+        name: '설비 예지보전 (PdM)',
+        s2: '정상 운전 구간 대비 진동·전류 이상치 탐지 모델 실험 및 정비 이력 라벨링 체계 구축',
+        s3: '설비별 Docker 모듈 배포 + 부품 교체 후 기준 분포 재정렬(자동 재학습 루프) 연결',
+        caution: '고장 사례 데이터가 적으므로 초기에는 지도학습보다 정상 패턴 이탈 감지(Anomaly Detection)로 시작하는 것이 현실적입니다.'
+      }
+    };
+
+    const m6LevelInfo = {
+      excel: {
+        name: '종이/엑셀 수기 관리',
+        s1: '① 엑셀 입력 양식 표준화(단위·코드 통일) ② 파이썬 Pandera로 일일 엑셀 파일 자동 검수 스크립트 도입 ③ DVC로 월별 정제 파일 버전 관리'
+      },
+      mes: {
+        name: 'MES/ERP DB 구축됨',
+        s1: '① MES/ERP 로트 데이터 자동 추출 쿼리 작성 ② 추출 시점 Pandera 스키마 검증 게이트 연결 ③ DVC로 학습용 스냅샷 버전 고정'
+      },
+      iot: {
+        name: '실시간 IoT/PLC 센서 연동',
+        s1: '① 센서 결측(-999)·스파이크 필터링 규칙(Pandera) 실시간 적용 ② 시간대별 피처 스토어/배치 스냅샷 자동화 ③ DVC 기반 데이터 계보 추적'
+      }
+    };
+
+    function m6RenderRoadmap() {
+      const d = m6DomainInfo[m6Domain];
+      const l = m6LevelInfo[m6Level];
+
+      document.getElementById('m6RoadmapOutput').innerHTML = `
+        <div class="roadmap-stage">
+          <h4>1단계: 데이터 표준화 · 검증 (DVC · Pandera)</h4>
+          <ul>
+            <li><strong>현황 맞춤:</strong> ${l.s1}</li>
+            <li><strong>목표:</strong> 불량/결측 데이터 학습 유입 0% 달성</li>
+          </ul>
+        </div>
+        <div class="roadmap-stage">
+          <h4>2단계: 실험 추적 · 레지스트리 (MLflow)</h4>
+          <ul>
+            <li><strong>적용 전략:</strong> ${d.s2}</li>
+            <li><strong>목표:</strong> 모델 버전별 성능 비교 및 안전한 롤백 체계 확보</li>
+          </ul>
+        </div>
+        <div class="roadmap-stage">
+          <h4>3단계: 자동 배포 · 모니터링 (Docker · Evidently)</h4>
+          <ul>
+            <li><strong>운영 방식:</strong> ${d.s3}</li>
+            <li><strong>목표:</strong> 계절·원물 변화에도 95% 수준 품질 유지</li>
+          </ul>
+        </div>
+      `;
+
+      document.getElementById('m6CautionBox').innerHTML = `<strong>⚠️ [${d.name}] 현장 도입 시 핵심 주의사항:</strong> ${d.caution}`;
+
+      m6LastRoadmapText = `[식품산업 MLOps 맞춤형 도입 로드맵]\n- 적용 분야: ${d.name}\n- 현재 데이터 수준: ${l.name}\n\n1단계(표준화·검증): ${l.s1}\n2단계(실험추적): ${d.s2}\n3단계(자동배포·모니터링): ${d.s3}\n\n※ 주의사항: ${d.caution}`;
+    }
+
+    document.querySelectorAll('#m6DomainChoices .choice-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('#m6DomainChoices .choice-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        m6Domain = card.dataset.val;
+        m6RenderRoadmap();
+      });
+    });
+
+    document.querySelectorAll('#m6LevelChoices .choice-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('#m6LevelChoices .choice-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        m6Level = card.dataset.val;
+        m6RenderRoadmap();
+      });
+    });
+
+    // 클립보드 복사 (iFrame 호환 document.execCommand 사용)
+    document.getElementById('m6CopyRoadmapBtn').addEventListener('click', () => {
+      const ta = document.createElement('textarea');
+      ta.value = m6LastRoadmapText;
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast('📋 맞춤형 도입 로드맵이 클립보드에 복사되었습니다!');
+      } catch (e) {
+        showToast('복사에 실패했습니다. 화면 내용을 직접 드래그해 복사해 주세요.');
+      }
+      document.body.removeChild(ta);
+    });
+
+    // 퀴즈 5문항 데이터
+    const m6Quizzes = [
+      {
+        q: '1. 지난달 데이터로 정확도 96%를 달성한 살균 불량 예측 모델이 여름철에 들어서며 정확도가 74%로 떨어졌습니다. 이를 해결하기 위해 가장 핵심적인 MLOps 요소는?',
+        opts: [
+          '주피터 노트북 파일명을 "최종_여름버전.ipynb"로 바꾼다.',
+          '데이터 드리프트 모니터링 및 주기적·자동 재학습 파이프라인을 구축한다.',
+          '공장 PC의 모니터 해상도를 높인다.'
+        ],
+        ans: 1,
+        exp: '계절·원물 변화로 입력 분포가 바뀌는 현상(Data Drift)을 감지하고 최신 데이터로 자동 재학습(CT)하는 것이 MLOps의 핵심입니다.'
+      },
+      {
+        q: '2. 원료 입고 데이터에 살균온도가 화씨(185°F)로 잘못 입력되거나 센서 오류(-999°C)가 섞여 들어왔습니다. 모델 학습 오염을 막는 단계는?',
+        opts: [
+          'Pandera 등을 활용한 데이터 검증 게이트웨이 (Schema Validation)',
+          'FastAPI 실시간 웹 서버 증설',
+          '모델을 무작정 더 복잡한 딥러닝으로 교체'
+        ],
+        ans: 0,
+        exp: '불량 데이터는 학습에 들어가기 전 입구(Schema Validation Gate)에서 범위·단위·결측치 규칙으로 자동 차단해야 합니다.'
+      },
+      {
+        q: '3. 새로 배포한 이물 검사 AI 모델(v2.0)이 정상 제품을 불량으로 과다 판정(오경보)하고 있습니다. 모델 레지스트리(MLflow)에서 가장 신속하고 안전한 조치는?',
+        opts: [
+          '라인을 멈추고 처음부터 데이터를 다시 수집해 1주일간 재학습한다.',
+          '모델 레지스트리에서 직전에 안정적으로 운영되던 이전 버전(v1.0)으로 즉시 롤백(Rollback)한다.',
+          '카메라 전원을 끄고 육안 검사로만 영구 전환한다.'
+        ],
+        ans: 1,
+        exp: 'Model Registry에 이전 Production 버전이 보관되어 있으므로, 이상 발생 시 즉시 이전 버전으로 롤백해 생산 중단을 막을 수 있습니다.'
+      },
+      {
+        q: '4. 다음 중 "실시간 API(FastAPI)" 방식보다 "배치 예측(Batch)" 방식이 더 적합한 식품 현장 업무는?',
+        opts: [
+          '초당 10개씩 지나가는 컨베이어 벨트 위 포장지 이물 비전 검사',
+          '매일 오전 6시에 전날 입고된 원료 성적서(COA) 120건의 유통기한 안정성 일괄 리포트 생성',
+          '살균기 온도 급강하 시 1초 이내 비상 알람 발송'
+        ],
+        ans: 1,
+        exp: '매일 정해진 시간에 대량 데이터를 한꺼번에 분석해 리포트를 만드는 업무는 비용과 관리 면에서 배치(Batch) 방식이 훨씬 효율적입니다.'
+      },
+      {
+        q: '5. "연구원 노트북에서는 잘 돌아가는데 공장 PC에 옮기니 파이썬 버전 충돌로 에러가 난다"는 문제를 해결하는 표준 패키징 기술은?',
+        opts: [
+          'Docker 컨테이너 (코드+파이썬+라이브러리 일체형 밀폐 패키징)',
+          '엑셀 매크로 (VBA)',
+          'PSI 지표 계산'
+        ],
+        ans: 0,
+        exp: 'Docker는 코드와 실행 환경을 표준 규격 밀폐용기(컨테이너)에 통째로 담아 어느 컴퓨터에서도 100% 동일하게 실행되게 합니다.'
+      }
+    ];
+
+    let m6QuizScore = 0;
+    let m6AnsweredCount = 0;
+
+    function m6RenderQuiz() {
+      m6QuizScore = 0;
+      m6AnsweredCount = 0;
+      document.getElementById('m6QuizScoreBadge').textContent = '점수: 0 / 5';
+      const container = document.getElementById('m6QuizContainer');
+      container.innerHTML = '';
+
+      m6Quizzes.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-item';
+        div.innerHTML = `
+          <p class="quiz-q">${item.q}</p>
+          <div class="quiz-options">
+            ${item.opts.map((opt, oIdx) => `
+              <button class="quiz-opt" type="button" data-q="${idx}" data-o="${oIdx}">${opt}</button>
+            `).join('')}
+          </div>
+          <div class="quiz-explain" id="m6Exp-${idx}"></div>
+        `;
+        container.appendChild(div);
+      });
+
+      container.querySelectorAll('.quiz-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const qIdx = Number(btn.dataset.q);
+          const oIdx = Number(btn.dataset.o);
+          const quiz = m6Quizzes[qIdx];
+          const parent = btn.parentElement;
+          const allBtns = parent.querySelectorAll('.quiz-opt');
+
+          allBtns.forEach(b => b.disabled = true);
+          const expBox = document.getElementById(`m6Exp-${qIdx}`);
+          expBox.style.display = 'block';
+
+          if (oIdx === quiz.ans) {
+            btn.classList.add('correct');
+            m6QuizScore++;
+            expBox.style.background = 'var(--emerald-bg)';
+            expBox.style.color = 'var(--emerald-dark)';
+            expBox.innerHTML = `<strong>✅ 정답입니다!</strong> ${quiz.exp}`;
+          } else {
+            btn.classList.add('wrong');
+            allBtns[quiz.ans].classList.add('correct');
+            expBox.style.background = 'var(--coral-bg)';
+            expBox.style.color = 'var(--coral-dark)';
+            expBox.innerHTML = `<strong>❌ 아쉽습니다.</strong> ${quiz.exp}`;
+          }
+
+          m6AnsweredCount++;
+          document.getElementById('m6QuizScoreBadge').textContent = `점수: ${m6QuizScore} / 5`;
+          if (m6AnsweredCount === 5) {
+            showToast(`퀴즈 완료! 총 5문항 중 ${m6QuizScore}문항을 맞추셨습니다.`);
+          }
+        });
+      });
+    }
+
+    document.getElementById('m6ResetQuizBtn').addEventListener('click', () => {
+      m6RenderQuiz();
+      showToast('퀴즈가 초기화되었습니다.');
+    });
+
+    /* ========================================================================
+       초기화 및 윈도우 리사이즈 대응
+       ======================================================================== */
+    window.addEventListener('resize', () => {
+      if (currentModule === 1) m1DrawChart();
+      if (currentModule === 4) m4ResizeConveyor();
+      if (currentModule === 5) m5DrawDrift();
+    });
+
+    window.onload = function () {
+      try {
+        m1UpdateUI();
+        m2SyncDisplays();
+        m3RenderTable();
+        m4ResizeConveyor();
+        m4AnimateConveyor();
+        m5DrawDrift();
+        m6RenderRoadmap();
+        m6RenderQuiz();
+      } catch (err) {
+        console.error('초기화 중 오류:', err);
+      }
+    };
+  </script>
+</body>
+</html>
